@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">Privacy Note</string>
+
+    //icon
+    <string name="icon_suitcase">&#xf0f2;</string>
+    <string name="icon_delete_tag">&#xf02c;</string>
+    <string name="hint_search">Searching for…</string>
+    <string name="search_description">City, Cities</string>
+
+    <string name="icon_circle">&#xf1db;</string>
+    <string name="icon_fill_circle">&#xf111;</string>
+    <string name="icon_serach">&#xf002;</string>
+    <string name="icon_close">&#xf05c;</string>
+    <string name="icon_edit">&#xf044;</string>
+    <string name="icon_save">&#xf0c7;</string>
+
+    <string name="icon_round">&#xf111;</string>
+    <string name="icon_copyright">&#xf1f9;</string>
+    <string name="icon_titlebarMenu">&#xf039;</string>
+
+    //navigation
+    <string name="icon_navigation_home">&#xf015;</string>
+    <string name="icon_navigation_backup">&#xf0ed;</string>
+    <string name="icon_navigation_restore">&#xf0ee;</string>
+    <string name="icon_navigation_about">&#xf0f4;</string>
+    <string name="icon_navigation_reset">&#xf13e;</string>
+
+</resources>

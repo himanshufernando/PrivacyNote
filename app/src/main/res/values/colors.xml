@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <color name="iconGreen">#00b145</color>
+    <color name="iconGreenLight">#00e459</color>
+    <color name="iconBlue">#3498db</color>
+    <color name="iconBlueLight">#67a2d4</color>
+    <color name="appWhite">#ffffff</color>
+    <color name="appBlack">#000000</color>
+    <color name="appFont">#686868</color>
+    <color name="iconRed">#e74c3c</color>
+    <color name="iconRedLite">#ed7669</color>
+    <color name="iconYellow">#f1c40f</color>
+
+    <color name="myDrakYellow">#e2a33e</color>
+    <color name="myBrowun">#8a6239</color>
+</resources>

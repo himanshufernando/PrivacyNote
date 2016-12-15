@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    tools:context="tkhub.project.PrivacyNote.Layout.Home"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="#ffffff">
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:src="@android:drawable/ic_menu_edit"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginBottom="10dp"
+            android:layout_marginRight="10dp"
+            android:background="#b71919" />
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_alignParentTop="true"
+            android:layout_height="60dip"
+            android:background="#0299e3"
+            android:layout_alignParentStart="true"
+            android:id="@+id/relativeLayout2"
+            android:layout_alignParentLeft="true">
+
+            <tkhub.project.PrivacyNote.Font.FontSpalsh
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Note"
+                android:id="@+id/textView2"
+                android:layout_marginLeft="10dp"
+                android:textColor="#ffffff"
+                android:layout_centerVertical="true"
+                android:layout_toEndOf="@+id/relativeLayout3"
+                android:layout_toRightOf="@+id/relativeLayout3" />
+
+            <RelativeLayout
+                android:layout_width="60dp"
+                android:layout_height="match_parent"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:id="@+id/relativeLayout3"
+                android:layout_marginRight="10dp"
+                android:layout_alignParentLeft="true">
+
+                <tkhub.project.PrivacyNote.Font.TextViewFontAwesome
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/icon_suitcase"
+                    android:id="@+id/textView3"
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true"
+                    android:textSize="40sp"
+                    android:textColor="#ffffff" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerVertical="true"
+                android:layout_toEndOf="@+id/textView2"
+                android:id="@+id/relativeLayoutSearch"
+                android:layout_marginLeft="10dp"
+                android:visibility="invisible"
+                android:layout_toRightOf="@+id/textView2">
+
+                <AutoCompleteTextView
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/autoCompleteTextView"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_toStartOf="@+id/relativeLayout16"
+                    android:layout_alignParentLeft="true"
+                    android:layout_toLeftOf="@+id/relativeLayout16" />
+
+                <RelativeLayout
+                    android:layout_width="60dp"
+                    android:layout_height="match_parent"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentEnd="true"
+                    android:id="@+id/relativeLayout16"
+                    android:layout_alignParentRight="true">
+
+                    <tkhub.project.PrivacyNote.Font.TextViewFontAwesome
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/icon_close"
+                        android:id="@+id/textView6"
+                        android:layout_centerVertical="true"
+                        android:layout_centerHorizontal="true"
+                        android:textSize="30dp"
+                        android:textColor="#ffffff" />
+                </RelativeLayout>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="60dp"
+                android:layout_height="match_parent"
+                android:layout_centerVertical="true"
+                android:layout_alignParentEnd="true"
+                android:id="@+id/relativeLayoutserachbutton"
+                android:layout_alignParentRight="true">
+
+                <tkhub.project.PrivacyNote.Font.TextViewFontAwesome
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/icon_serach"
+                    android:id="@+id/textView7"
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true"
+                    android:textColor="#ffffff"
+                    android:textSize="30dp" />
+            </RelativeLayout>
+
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/relativeLayout2"
+            android:layout_alignParentStart="true"
+            android:id="@+id/relativeLayoutlistnote"
+            android:visibility="visible"
+            android:layout_alignParentLeft="true">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/list_news"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:divider="@color/iconBlue"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentStart="true"
+                android:dividerHeight="20dip"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                android:background="#e6e5e5"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentRight="true" />
+
+
+
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/relativeLayout2"
+            android:id="@+id/relativeLayoutnoteadd"
+            android:visibility="gone"
+            android:background="@color/design_fab_shadow_start_color"
+            android:layout_alignParentLeft="true">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentStart="true"
+                android:background="@drawable/relative_layout_background"
+                android:layout_margin="3dp"
+                android:layout_alignParentLeft="true">
+
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:id="@+id/editText_title"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentEnd="true"
+                    android:hint="Title"
+                    android:textColor="@color/button_material_dark"
+                    android:textColorHint="@color/cardview_shadow_start_color"
+                    android:background="#ffffff"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentRight="true" />
+
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:id="@+id/editText_user"
+                    android:layout_below="@+id/editText_title"
+                    android:layout_alignStart="@+id/editText_title"
+                    android:layout_alignEnd="@+id/editText_title"
+                    android:background="#ffffff"
+                    android:textColor="@color/button_material_dark"
+                    android:textColorHint="@color/cardview_shadow_start_color"
+                    android:hint="User Name"
+                    android:layout_alignLeft="@+id/editText_title"
+                    android:layout_alignRight="@+id/editText_title" />
+
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:ems="10"
+                    android:id="@+id/editText_pass2"
+                    android:layout_below="@+id/editText_user"
+                    android:layout_alignStart="@+id/editText_user"
+                    android:layout_alignEnd="@+id/editText_user"
+                    android:background="#ffffff"
+                    android:textColor="@color/button_material_dark"
+                    android:textColorHint="@color/cardview_shadow_start_color"
+                    android:hint="Password"
+                    android:layout_alignLeft="@+id/editText_user"
+                    android:layout_alignRight="@+id/editText_user" />
+
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="100dp"
+                    android:inputType="textMultiLine"
+                    android:ems="10"
+                    android:id="@+id/editText_other"
+                    android:layout_below="@+id/editText_pass2"
+                    android:layout_alignStart="@+id/editText_pass2"
+                    android:layout_alignEnd="@+id/editText_pass2"
+                    android:background="#ffffff"
+                    android:hint="Other"
+                    android:textColor="@color/button_material_dark"
+                    android:textColorHint="@color/cardview_shadow_start_color"
+                    android:layout_alignLeft="@+id/editText_pass2"
+                    android:layout_alignRight="@+id/editText_pass2" />
+
+                <android.support.design.widget.FloatingActionButton
+                    android:id="@+id/fab2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|end"
+                    android:src="@android:drawable/ic_menu_save"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginRight="10dp"
+                    android:background="#b71919" />
+
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+
+    </RelativeLayout>
+
+
+
+    <RelativeLayout
+        android:id="@+id/drawer"
+        android:layout_width="300dp"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/Relative_TitleBar"
+        android:layout_gravity="start"
+        android:background="#cc3399cc"
+        >
+
+
+        <RelativeLayout
+            android:id="@+id/relativeLayout6"
+            android:layout_width="match_parent"
+            android:layout_height="150dip"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:background="@color/iconBlue">
+
+            <ImageView
+                android:id="@+id/userimage"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/fingerprintwi" />
+
+
+
+
+        </RelativeLayout>
+
+        <ListView
+            android:id="@+id/listView_navigation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/relativeLayout6"
+            android:layout_centerHorizontal="true"
+            android:divider="@color/iconBlue" />
+    </RelativeLayout>
+
+
+</android.support.v4.widget.DrawerLayout>

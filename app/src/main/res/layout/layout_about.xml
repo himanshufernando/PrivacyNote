@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffffff">
+
+
+
+    <com.mikhaellopez.circularimageview.CircularImageView
+        android:layout_width="200dip"
+        android:layout_height="200dip"
+        app:border_color="#ffffff"
+        app:border_width="10dp"
+        android:id="@+id/imageView_logo"
+        android:src="@drawable/logo"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="150dip"
+        />
+
+    <tkhub.project.PrivacyNote.Font.FontTK
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TKHub"
+        android:id="@+id/textView1"
+        android:layout_marginTop="89dp"
+        android:textColor="@color/appFont"
+        android:textSize="50sp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <tkhub.project.PrivacyNote.Font.FontSpalsh
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="© 2016 TKHub"
+        android:id="@+id/textView"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:textColor="#000000"
+        android:layout_marginBottom="2dp" />
+
+    <tkhub.project.PrivacyNote.Font.FontTK
+        android:text="www.tkhub.com"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/appFont"
+        android:layout_below="@+id/imageView_logo"
+        android:layout_centerHorizontal="true"
+        android:textSize="20sp"
+        android:layout_marginTop="40dp"
+        android:id="@+id/textView9" />
+
+    <tkhub.project.PrivacyNote.Font.FontTK
+        android:text="info@tkhub.com"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView9"
+        android:textColor="@color/appFont"
+        android:textSize="20sp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dip"
+        android:id="@+id/textView10" />
+
+    <tkhub.project.PrivacyNote.Font.FontTK
+        android:text="+94765399875"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView10"
+        android:textColor="@color/appFont"
+        android:textSize="20sp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dip"
+        android:id="@+id/textView11" />
+
+</RelativeLayout>
