@@ -199,7 +199,7 @@ public class Home extends Activity implements Animation.AnimationListener {
                     }catch(Exception e){
                         e.printStackTrace();
                     }*/
-                    mRealm.writeCopyTo(dir);
+                  //  mRealm.writeCopyTo(dir);
                     //  mRealm.close();
                 }
                 if (position == 2) {
