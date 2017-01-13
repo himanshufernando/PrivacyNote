@@ -17,7 +17,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_alignParentTop="true"
-            android:layout_height="60dip"
+            android:layout_height="50dip"
             android:background="#0299e3"
             android:layout_alignParentStart="true"
             android:id="@+id/relativeLayout2"
@@ -51,7 +51,7 @@
                     android:id="@+id/textView3"
                     android:layout_centerVertical="true"
                     android:layout_centerHorizontal="true"
-                    android:textSize="40sp"
+                    android:textSize="20sp"
                     android:textColor="#ffffff" />
             </RelativeLayout>
 
@@ -261,7 +261,7 @@
 
     <RelativeLayout
         android:id="@+id/drawer"
-        android:layout_width="300dp"
+        android:layout_width="200dp"
         android:layout_height="match_parent"
         android:layout_below="@+id/relativeLayout2"
         android:layout_gravity="start"
@@ -272,7 +272,7 @@
         <RelativeLayout
             android:id="@+id/relativeLayout6"
             android:layout_width="match_parent"
-            android:layout_height="150dip"
+            android:layout_height="100dip"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
@@ -280,8 +280,8 @@
 
             <ImageView
                 android:id="@+id/userimage"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_width="100dip"
+                android:layout_height="100dip"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
                 android:src="@drawable/fingerprint"

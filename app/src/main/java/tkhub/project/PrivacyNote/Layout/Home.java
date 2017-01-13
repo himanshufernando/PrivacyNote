@@ -24,6 +24,7 @@ import android.security.keystore.KeyPermanentlyInvalidatedException;
 import android.security.keystore.KeyProperties;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -47,6 +48,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -84,6 +87,8 @@ import tkhub.project.PrivacyNote.Servies.FingerprintHandler3;
  */
 public class Home extends Activity implements Animation.AnimationListener {
 
+
+    private static final int MY_PERMISSIONS_REQUEST_EXTERNAL_STORAGE = 123;
     Dialog dialogBox, dialogBoxedit;
     private Realm mRealm;
     private RealmConfiguration realmConfig;
@@ -143,6 +148,12 @@ public class Home extends Activity implements Animation.AnimationListener {
 
     private FingerprintManager.CryptoObject mCryptoObject;
 
+    private File EXPORT_REALM_PATH = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+    private String EXPORT_REALM_FILE_NAME = "glucosio.realm";
+    private String IMPORT_REALM_FILE_NAME = "default.realm";
+
+    private ArrayList<String> docPaths = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -189,24 +200,34 @@ public class Home extends Activity implements Animation.AnimationListener {
                                    }
                 if (position == 1) {
 
-                    File dir = new File(Environment.getExternalStorageDirectory(), "Hima");
-                   /* try{
-                        if(dir.mkdir()) {
-                            System.out.println("Directory created");
-                        } else {
-                            System.out.println("Directory is not created");
-                        }
-                    }catch(Exception e){
-                        e.printStackTrace();
-                    }*/
-                  //  mRealm.writeCopyTo(dir);
-                    //  mRealm.close();
+
+/*
+                    File exportRealmFile;
+
+                    EXPORT_REALM_PATH.mkdirs();
+
+                    // create a backup file
+                    exportRealmFile = new File(EXPORT_REALM_PATH, EXPORT_REALM_FILE_NAME);
+
+                    // if backup file already exists, delete it
+                    exportRealmFile.delete();
+
+                    // copy current realm to backup file
+                    mRealm.writeCopyTo(exportRealmFile);
+
+                    String msg = "File exported to Path: " + EXPORT_REALM_PATH + "/" + EXPORT_REALM_FILE_NAME;
+                    Toast.makeText(Home.this, msg, Toast.LENGTH_SHORT).show();
+                    mRealm.close();*/
                 }
                 if (position == 2) {
 
-                    File dir = new File(Environment.getExternalStorageDirectory(), "Hima");
 
-                    mRealm.writeCopyTo(dir);
+                    //Restore
+                    String restoreFilePath = EXPORT_REALM_PATH + "/" + EXPORT_REALM_FILE_NAME;
+
+
+                    copyBundledRealmFile(restoreFilePath, IMPORT_REALM_FILE_NAME);
+
 
                 }
                 if (position == 3) {
@@ -1020,6 +1041,81 @@ public class Home extends Activity implements Animation.AnimationListener {
 
         }
     }
+    private String copyBundledRealmFile(String oldFilePath, String outFileName) {
+        try {
+            File file = new File(Home.this.getFilesDir(), outFileName);
 
+            FileOutputStream outputStream = new FileOutputStream(file);
+
+            FileInputStream inputStream = new FileInputStream(new File(oldFilePath));
+
+            byte[] buf = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = inputStream.read(buf)) > 0) {
+                outputStream.write(buf, 0, bytesRead);
+            }
+            outputStream.close();
+            return file.getAbsolutePath();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private boolean checkPermission() {
+        int result = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_CALENDAR);
+        return result == PackageManager.PERMISSION_GRANTED ;
+    }
+
+    private void requestPermission() {
+
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_EXTERNAL_STORAGE);
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_EXTERNAL_STORAGE:
+                if (grantResults.length > 0) {
+                    boolean locationAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                    if (locationAccepted ){}
+
+                    else {
+                        Toast.makeText(this, "Permission Denied", Toast.LENGTH_LONG).show();
+
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            if (shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                                showMessageOKCancel("You need to allow access to both the permissions",
+                                        new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                                    requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},MY_PERMISSIONS_REQUEST_EXTERNAL_STORAGE);
+                                                }
+                                            }
+                                        });
+                                return;
+                            }
+                        }
+
+                    }
+                }
+
+
+                break;
+        }
+    }
+
+
+
+    private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
+        new AlertDialog.Builder(Home.this)
+                .setMessage(message)
+                .setPositiveButton("OK", okListener)
+                .setNegativeButton("Cancel", null)
+                .create()
+                .show();
+    }
 
 }

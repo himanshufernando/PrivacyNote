@@ -222,6 +222,7 @@ public class Password extends Activity implements Animation.AnimationListener {
                     t3.setText(R.string.icon_circle);
                     t4.setText(R.string.icon_circle);
                     password = "";
+                    passwordToBeconfirmd = "";
                 } else {
                     t1.setText(R.string.icon_circle);
                     t2.setText(R.string.icon_circle);

@@ -19,7 +19,6 @@
             android:layout_alignParentLeft="true"
             android:id="@+id/relativeLayout9"
             android:layout_alignParentStart="true"
-            android:background="@drawable/circle"
             android:layout_width="60dip"
             android:layout_marginLeft="10dp">
 
@@ -28,8 +27,8 @@
                 android:layout_height="wrap_content"
                 android:text="New"
                 android:id="@+id/imageViewnavigationIcon"
-                android:textSize="50sp"
-                android:textColor="@color/appWhite"
+                android:textSize="40sp"
+                android:textColor="@color/iconBlue"
                 android:layout_centerVertical="true"
                 android:layout_centerHorizontal="true" />
         </RelativeLayout>
@@ -45,7 +44,7 @@
             android:layout_centerVertical="true"
             android:layout_toRightOf="@+id/relativeLayout9"
             android:layout_toEndOf="@+id/relativeLayout9"
-            android:layout_marginLeft="20dp" />
+            android:layout_marginLeft="10dp" />
 
 
     </RelativeLayout>
