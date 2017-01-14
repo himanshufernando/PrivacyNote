@@ -32,6 +32,11 @@ buildscript {
         classpath "io.realm:realm-gradle-plugin:2.0.2"
     }
 }
+repositories {
+    maven {
+        url  "http://dl.bintray.com/lukaville/maven"
+    }
+}
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
@@ -50,5 +55,5 @@ dependencies {
     compile 'com.codemybrainsout.onboarding:onboarder:1.0.0'
     compile 'javax.inject:javax.inject:1'
 
-
+    compile 'com.nbsp:library:1.1'
 }

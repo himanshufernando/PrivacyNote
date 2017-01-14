@@ -47,6 +47,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.nbsp.materialfilepicker.MaterialFilePicker;
+import com.nbsp.materialfilepicker.ui.FilePickerActivity;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -59,8 +62,12 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
@@ -148,8 +155,8 @@ public class Home extends Activity implements Animation.AnimationListener {
 
     private FingerprintManager.CryptoObject mCryptoObject;
 
-    private File EXPORT_REALM_PATH = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-    private String EXPORT_REALM_FILE_NAME = "glucosio.realm";
+    private File EXPORT_REALM_PATH = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
+    private String EXPORT_REALM_FILE_NAME = "privacynotebackup.realm";
     private String IMPORT_REALM_FILE_NAME = "default.realm";
 
     private ArrayList<String> docPaths = new ArrayList<>();
@@ -183,51 +190,41 @@ public class Home extends Activity implements Animation.AnimationListener {
 
         ArrayList<NavigationDrawerItem> mNavItems = new ArrayList<NavigationDrawerItem>();
 
-         mNavItems.add(new NavigationDrawerItem("Home", R.string.icon_navigation_home));
-         mNavItems.add(new NavigationDrawerItem("Backup", R.string.icon_navigation_backup));
-         mNavItems.add(new NavigationDrawerItem("Restore", R.string.icon_navigation_restore));
+        mNavItems.add(new NavigationDrawerItem("Home", R.string.icon_navigation_home));
+        mNavItems.add(new NavigationDrawerItem("Backup", R.string.icon_navigation_backup));
+        mNavItems.add(new NavigationDrawerItem("Restore", R.string.icon_navigation_restore));
         mNavItems.add(new NavigationDrawerItem("Password Reset", R.string.icon_navigation_reset));
-         mNavItems.add(new NavigationDrawerItem("About", R.string.icon_navigation_about));
+        mNavItems.add(new NavigationDrawerItem("About", R.string.icon_navigation_about));
 
 
         NavigationDrawer adapter = new NavigationDrawer(this, mNavItems);
         navigationList = (ListView) findViewById(R.id.listView_navigation);
         navigationList.setAdapter(adapter);
+        notAdapter = new NoteAdapter(this, noteItems);
+        titleList = new ArrayList<String>();
 
         navigationList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (position == 0) {
-                                   }
+                }
                 if (position == 1) {
-
-
-/*
                     File exportRealmFile;
-
                     EXPORT_REALM_PATH.mkdirs();
-
-                    // create a backup file
                     exportRealmFile = new File(EXPORT_REALM_PATH, EXPORT_REALM_FILE_NAME);
-
-                    // if backup file already exists, delete it
                     exportRealmFile.delete();
-
-                    // copy current realm to backup file
                     mRealm.writeCopyTo(exportRealmFile);
-
                     String msg = "File exported to Path: " + EXPORT_REALM_PATH + "/" + EXPORT_REALM_FILE_NAME;
-                    Toast.makeText(Home.this, msg, Toast.LENGTH_SHORT).show();
-                    mRealm.close();*/
+                    Toast.makeText(Home.this, msg, Toast.LENGTH_LONG).show();
+                    mRealm.close();
                 }
                 if (position == 2) {
 
-
-                    //Restore
-                    String restoreFilePath = EXPORT_REALM_PATH + "/" + EXPORT_REALM_FILE_NAME;
-
-
-                    copyBundledRealmFile(restoreFilePath, IMPORT_REALM_FILE_NAME);
-
+                    new MaterialFilePicker()
+                            .withActivity(Home.this)
+                            .withRequestCode(1)
+                            .withFilterDirectories(true) // Set directories filterable (false by default)
+                            .withHiddenFiles(true) // Show hidden files and folders
+                            .start();
 
                 }
                 if (position == 3) {
@@ -244,21 +241,8 @@ public class Home extends Activity implements Animation.AnimationListener {
             }
         });
 
+        setAllNote();
 
-
-
-        titleList = new ArrayList<String>();
-
-
-        notAdapter = new NoteAdapter(this, noteItems);
-
-        for (NoteDB no : mRealm.where(NoteDB.class).equalTo("allowe", 0).findAll()) {
-            noteItems.add(new NoteItem(no.getId(), no.getTitle(), no.getUserName(),
-                    no.getPassword(), no.getOther()));
-
-        }
-
-        eventList.setAdapter(notAdapter);
 
 
         layoutAbout.setOnClickListener(new View.OnClickListener() {
@@ -361,6 +345,19 @@ public class Home extends Activity implements Animation.AnimationListener {
             }
         });
 
+
+    }
+
+    public void setAllNote(){
+
+        noteItems.clear();
+        for (NoteDB no : mRealm.where(NoteDB.class).equalTo("allowe", 0).findAll()) {
+            noteItems.add(new NoteItem(no.getId(), no.getTitle(), no.getUserName(),
+                    no.getPassword(), no.getOther()));
+
+        }
+
+        eventList.setAdapter(notAdapter);
 
     }
 
@@ -1041,6 +1038,7 @@ public class Home extends Activity implements Animation.AnimationListener {
 
         }
     }
+
     private String copyBundledRealmFile(String oldFilePath, String outFileName) {
         try {
             File file = new File(Home.this.getFilesDir(), outFileName);
@@ -1064,7 +1062,7 @@ public class Home extends Activity implements Animation.AnimationListener {
 
     private boolean checkPermission() {
         int result = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_CALENDAR);
-        return result == PackageManager.PERMISSION_GRANTED ;
+        return result == PackageManager.PERMISSION_GRANTED;
     }
 
     private void requestPermission() {
@@ -1079,9 +1077,8 @@ public class Home extends Activity implements Animation.AnimationListener {
             case MY_PERMISSIONS_REQUEST_EXTERNAL_STORAGE:
                 if (grantResults.length > 0) {
                     boolean locationAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
-                    if (locationAccepted ){}
-
-                    else {
+                    if (locationAccepted) {
+                    } else {
                         Toast.makeText(this, "Permission Denied", Toast.LENGTH_LONG).show();
 
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -1091,7 +1088,7 @@ public class Home extends Activity implements Animation.AnimationListener {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
                                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                                    requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},MY_PERMISSIONS_REQUEST_EXTERNAL_STORAGE);
+                                                    requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_EXTERNAL_STORAGE);
                                                 }
                                             }
                                         });
@@ -1107,6 +1104,18 @@ public class Home extends Activity implements Animation.AnimationListener {
         }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 1 && resultCode == RESULT_OK) {
+            String filePath = data.getStringExtra(FilePickerActivity.RESULT_FILE_PATH);
+            copyBundledRealmFile(filePath, IMPORT_REALM_FILE_NAME);
+
+
+
+        }
+    }
 
 
     private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
