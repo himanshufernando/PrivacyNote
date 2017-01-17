@@ -385,10 +385,8 @@ public class Password extends Activity implements Animation.AnimationListener {
                 }
 
             } else {
-                Long ap = mRealm.where(AppuserDB.class).equalTo("password",   ).count();
+                Long ap = mRealm.where(AppuserDB.class).equalTo("password",password).count();
                 if (ap != 0) {
-
-
                     sucsessAccess();
                 } else {
                     message.setText("Password wrong");

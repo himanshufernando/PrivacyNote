@@ -20,7 +20,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Vibrator;
 import android.security.keystore.KeyGenParameterSpec;
-import android.security.keystore.KeyPermanentlyInvalidatedException;
 import android.security.keystore.KeyProperties;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
@@ -62,12 +61,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
@@ -95,7 +90,9 @@ import tkhub.project.PrivacyNote.Servies.FingerprintHandler3;
 public class Home extends Activity implements Animation.AnimationListener {
 
 
-    private static final int MY_PERMISSIONS_REQUEST_EXTERNAL_STORAGE = 123;
+    private static final int MY_PERMISSIONS_REQUEST_EXTERNAL_STORAGE_WRITE = 123;
+    private static final int MY_PERMISSIONS_REQUEST_EXTERNAL_STORAGE_READ = 124;
+
     Dialog dialogBox, dialogBoxedit;
     private Realm mRealm;
     private RealmConfiguration realmConfig;
@@ -123,7 +120,7 @@ public class Home extends Activity implements Animation.AnimationListener {
     public String notePassword;
     public String noteOther;
     SearchView searchView;
-
+     String finalPass ;
     String pass;
 
     int confrimStatues = 0;
@@ -160,6 +157,8 @@ public class Home extends Activity implements Animation.AnimationListener {
     private String IMPORT_REALM_FILE_NAME = "default.realm";
 
     private ArrayList<String> docPaths = new ArrayList<>();
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -208,23 +207,24 @@ public class Home extends Activity implements Animation.AnimationListener {
                 if (position == 0) {
                 }
                 if (position == 1) {
-                    File exportRealmFile;
-                    EXPORT_REALM_PATH.mkdirs();
-                    exportRealmFile = new File(EXPORT_REALM_PATH, EXPORT_REALM_FILE_NAME);
-                    exportRealmFile.delete();
-                    mRealm.writeCopyTo(exportRealmFile);
-                    String msg = "File exported to Path: " + EXPORT_REALM_PATH + "/" + EXPORT_REALM_FILE_NAME;
-                    Toast.makeText(Home.this, msg, Toast.LENGTH_LONG).show();
-                    mRealm.close();
+                    if (!checkPermission()) {
+                        requestPermission();
+                    } else {
+                       writeBackup();
+
+                    }
+
+
                 }
                 if (position == 2) {
 
-                    new MaterialFilePicker()
-                            .withActivity(Home.this)
-                            .withRequestCode(1)
-                            .withFilterDirectories(true) // Set directories filterable (false by default)
-                            .withHiddenFiles(true) // Show hidden files and folders
-                            .start();
+                    if (!checkPermissionRead()) {
+                        requestPermissionRead();
+                    } else {
+                       readeBackup();
+                    }
+
+
 
                 }
                 if (position == 3) {
@@ -1061,23 +1061,31 @@ public class Home extends Activity implements Animation.AnimationListener {
     }
 
     private boolean checkPermission() {
-        int result = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_CALENDAR);
+        int result = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        return result == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private boolean checkPermissionRead() {
+        int result = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE);
         return result == PackageManager.PERMISSION_GRANTED;
     }
 
     private void requestPermission() {
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_EXTERNAL_STORAGE_WRITE);
+    }
 
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_EXTERNAL_STORAGE);
-
+    private void requestPermissionRead() {
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_EXTERNAL_STORAGE_READ);
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
-            case MY_PERMISSIONS_REQUEST_EXTERNAL_STORAGE:
+            case MY_PERMISSIONS_REQUEST_EXTERNAL_STORAGE_WRITE:
                 if (grantResults.length > 0) {
                     boolean locationAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
                     if (locationAccepted) {
+                        writeBackup();
                     } else {
                         Toast.makeText(this, "Permission Denied", Toast.LENGTH_LONG).show();
 
@@ -1088,7 +1096,7 @@ public class Home extends Activity implements Animation.AnimationListener {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
                                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                                    requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_EXTERNAL_STORAGE);
+                                                    requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_EXTERNAL_STORAGE_WRITE);
                                                 }
                                             }
                                         });
@@ -1098,9 +1106,32 @@ public class Home extends Activity implements Animation.AnimationListener {
 
                     }
                 }
-
-
                 break;
+            case MY_PERMISSIONS_REQUEST_EXTERNAL_STORAGE_READ:
+                if (grantResults.length > 0) {
+                    boolean locationAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                    if (locationAccepted) {
+                        readeBackup();
+                    } else {
+                        Toast.makeText(this, "Permission Denied", Toast.LENGTH_LONG).show();
+
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            if (shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                                showMessageOKCancel("You need to allow access to both the permissions",
+                                        new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                                    requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_EXTERNAL_STORAGE_READ);
+                                                }
+                                            }
+                                        });
+                                return;
+                            }
+                        }
+
+                    }
+                }
         }
     }
 
@@ -1110,13 +1141,23 @@ public class Home extends Activity implements Animation.AnimationListener {
 
         if (requestCode == 1 && resultCode == RESULT_OK) {
             String filePath = data.getStringExtra(FilePickerActivity.RESULT_FILE_PATH);
-            copyBundledRealmFile(filePath, IMPORT_REALM_FILE_NAME);
-
+           copyBundledRealmFile(filePath, IMPORT_REALM_FILE_NAME);
 
 
         }
-    }
 
+        new AlertDialog.Builder(Home.this)
+                .setTitle("Restore Successfully")
+                .setMessage("Database restore successfully,please restart the app and reset your password")
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        android.os.Process.killProcess(android.os.Process.myPid());
+                    }
+                })
+                .create()
+                .show();
+    }
 
     private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
         new AlertDialog.Builder(Home.this)
@@ -1125,6 +1166,34 @@ public class Home extends Activity implements Animation.AnimationListener {
                 .setNegativeButton("Cancel", null)
                 .create()
                 .show();
+    }
+
+    public void writeBackup(){
+        File exportRealmFile;
+        EXPORT_REALM_PATH.mkdirs();
+        exportRealmFile = new File(EXPORT_REALM_PATH, EXPORT_REALM_FILE_NAME);
+        exportRealmFile.delete();
+        mRealm.writeCopyTo(exportRealmFile);
+
+        String msg = "File exported to Path: " + EXPORT_REALM_PATH + "/" + EXPORT_REALM_FILE_NAME;
+
+        new AlertDialog.Builder(Home.this)
+                .setTitle("Backup Successful")
+                .setMessage(msg)
+                .setPositiveButton("OK",null)
+                .create()
+                .show();
+
+        mRealm.close();
+    }
+
+    public void readeBackup(){
+        new MaterialFilePicker()
+                .withActivity(Home.this)
+                .withRequestCode(1)
+                .withFilterDirectories(true) // Set directories filterable (false by default)
+                .withHiddenFiles(true) // Show hidden files and folders
+                .start();
     }
 
 }

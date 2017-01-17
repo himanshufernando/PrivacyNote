@@ -25,4 +25,7 @@
     <string name="icon_navigation_about">&#xf0f4;</string>
     <string name="icon_navigation_reset">&#xf13e;</string>
 
+    <string name="icon_lockopen">&#xf13e;</string>
+    <string name="icon_navigation_sms">&#xf0e0;</string>
+
 </resources>
