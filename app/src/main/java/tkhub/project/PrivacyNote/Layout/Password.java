@@ -5,6 +5,7 @@ import android.app.ActivityOptions;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
@@ -22,6 +23,7 @@ import android.widget.Toast;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import tkhub.project.PrivacyNote.DB.AppuserDB;
+import tkhub.project.PrivacyNote.DB.ResetDB;
 import tkhub.project.PrivacyNote.Font.TextViewFontAwesome;
 import tkhub.project.PrivacyNote.R;
 
@@ -66,9 +68,16 @@ public class Password extends Activity implements Animation.AnimationListener {
         message = (TextView) findViewById(R.id.textViewMessage);
 
         Realm.init(this);
-        mRealm= Realm.getDefaultInstance();
+        mRealm = Realm.getDefaultInstance();
+
+
+
 
         final Long tableSize = mRealm.where(AppuserDB.class).count();
+        final Long resetTableSize = mRealm.where(ResetDB.class).count();
+
+        SharedPreferences  pref = getApplicationContext().getSharedPreferences("MyPref", 0);
+        System.out.println("ssdsdsdssd :"+ pref.getInt("01", 2));
 
         if (tableSize == 0) {
             message.setText("Please set the Password");
@@ -211,8 +220,6 @@ public class Password extends Activity implements Animation.AnimationListener {
             @Override
             public void onClick(View v) {
                 mVibrator.vibrate(100);
-
-
                 if (passwordStatues == 0) {
                     message.setTextColor(getResources().getColor(R.color.iconRed));
                     message.setText("You don't have a Password to reset,Please set initial Password");
@@ -224,7 +231,8 @@ public class Password extends Activity implements Animation.AnimationListener {
                     password = "";
                     passwordToBeconfirmd = "";
                 } else {
-                    t1.setText(R.string.icon_circle);
+
+                   /* t1.setText(R.string.icon_circle);
                     t2.setText(R.string.icon_circle);
                     t3.setText(R.string.icon_circle);
                     t4.setText(R.string.icon_circle);
@@ -235,7 +243,7 @@ public class Password extends Activity implements Animation.AnimationListener {
 
                     message.setTextColor(getResources().getColor(R.color.iconRed));
                     checkPassword();
-                    message.setText("Please set the Password");
+                    message.setText("Please set the Password");*/
                 }
 
 
@@ -319,16 +327,14 @@ public class Password extends Activity implements Animation.AnimationListener {
                         mRealm.executeTransaction(new Realm.Transaction() {
                             @Override
                             public void execute(Realm realm) {
-                                Object primaryKeyValue =tableSize + 1;
-                                AppuserDB userAdd = realm.createObject(AppuserDB.class,primaryKeyValue);
+                                Object primaryKeyValue = tableSize + 1;
+                                AppuserDB userAdd = realm.createObject(AppuserDB.class, primaryKeyValue);
                                 userAdd.setPassword(password);
                                 Toast.makeText(Password.this, "Password added successfully", Toast.LENGTH_LONG).show();
                                 password = "";
                                 confrimStatues = 1;
                                 passwordToBeconfirmd = "";
                                 message.setText("");
-
-
                                 sucsessAccess();
                             }
                         });
@@ -359,15 +365,11 @@ public class Password extends Activity implements Animation.AnimationListener {
                             public void execute(Realm realm) {
                                 AppuserDB toEdit = mRealm.where(AppuserDB.class).equalTo("id", 1).findFirst();
                                 toEdit.setPassword(password);
-
                                 Toast.makeText(Password.this, "Password reset successfully", Toast.LENGTH_LONG).show();
                                 password = "";
                                 confrimStatues = 1;
                                 passwordToBeconfirmd = "";
                                 message.setText("");
-
-
-
                                 sucsessAccess();
                             }
                         });
@@ -385,7 +387,7 @@ public class Password extends Activity implements Animation.AnimationListener {
                 }
 
             } else {
-                Long ap = mRealm.where(AppuserDB.class).equalTo("password",password).count();
+                Long ap = mRealm.where(AppuserDB.class).equalTo("password", password).count();
                 if (ap != 0) {
                     sucsessAccess();
                 } else {

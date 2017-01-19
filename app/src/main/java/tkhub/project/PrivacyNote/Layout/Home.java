@@ -10,6 +10,7 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -18,6 +19,7 @@ import android.hardware.fingerprint.FingerprintManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Process;
 import android.os.Vibrator;
 import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyProperties;
@@ -79,6 +81,7 @@ import tkhub.project.PrivacyNote.Adapter.NoteAdapter;
 import tkhub.project.PrivacyNote.Adapter.NoteItem;
 import tkhub.project.PrivacyNote.DB.AppuserDB;
 import tkhub.project.PrivacyNote.DB.NoteDB;
+import tkhub.project.PrivacyNote.DB.ResetDB;
 import tkhub.project.PrivacyNote.Font.TextViewFontAwesome;
 import tkhub.project.PrivacyNote.R;
 import tkhub.project.PrivacyNote.Servies.FingerprintHandler2;
@@ -1049,6 +1052,19 @@ public class Home extends Activity implements Animation.AnimationListener {
 
             byte[] buf = new byte[1024];
             int bytesRead;
+
+          /*  mRealm.executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    final Long tableSize = mRealm.where(ResetDB.class).count();
+                    Object primaryKeyValue = tableSize + 1;
+                    ResetDB userAdd = realm.createObject(ResetDB.class, primaryKeyValue);
+                    userAdd.setPassword("123");
+
+                }
+            });
+*/
+
             while ((bytesRead = inputStream.read(buf)) > 0) {
                 outputStream.write(buf, 0, bytesRead);
             }
@@ -1139,11 +1155,17 @@ public class Home extends Activity implements Animation.AnimationListener {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+
+
+        SharedPreferences sharedPref = getApplicationContext().getSharedPreferences("MyPref", 0);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putInt("01",255);
+        editor.commit();
+
+
         if (requestCode == 1 && resultCode == RESULT_OK) {
             String filePath = data.getStringExtra(FilePickerActivity.RESULT_FILE_PATH);
            copyBundledRealmFile(filePath, IMPORT_REALM_FILE_NAME);
-
-
         }
 
         new AlertDialog.Builder(Home.this)
@@ -1152,7 +1174,7 @@ public class Home extends Activity implements Animation.AnimationListener {
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        android.os.Process.killProcess(android.os.Process.myPid());
+                        Process.killProcess(Process.myPid());
                     }
                 })
                 .create()
