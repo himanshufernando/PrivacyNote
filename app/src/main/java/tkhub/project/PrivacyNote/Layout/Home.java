@@ -232,6 +232,11 @@ public class Home extends Activity implements Animation.AnimationListener {
                 }
                 if (position == 3) {
 
+                    Intent intent = new Intent(Home.this, SecurityQuestion.class);
+                    intent.putExtra("PerantLayout",2);
+                    Bundle bndlanimation = ActivityOptions.makeCustomAnimation(Home.this, R.anim.animation, R.anim.animation2).toBundle();
+                    finish();
+                    startActivity(intent, bndlanimation);
                 }
                 if (position == 4) {
                     Intent i = new Intent(Home.this, About.class);

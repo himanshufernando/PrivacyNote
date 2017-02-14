@@ -56,4 +56,5 @@ dependencies {
     compile 'javax.inject:javax.inject:1'
 
     compile 'com.nbsp:library:1.1'
+    compile 'com.jaredrummler:material-spinner:1.1.0'
 }

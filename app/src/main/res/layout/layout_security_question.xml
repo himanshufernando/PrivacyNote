@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/appWhite">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_height="50dip"
+        android:background="#0299e3"
+        android:layout_alignParentStart="true"
+        android:id="@+id/relativeLayout2"
+        android:layout_alignParentLeft="true">
+
+        <tkhub.project.PrivacyNote.Font.FontSpalsh
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Security Question "
+            android:id="@+id/textView2"
+            android:layout_marginLeft="10dp"
+            android:textColor="#ffffff"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@+id/relativeLayout3"
+            android:layout_toRightOf="@+id/relativeLayout3" />
+
+        <RelativeLayout
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"
+            android:id="@+id/relativeLayoutserachbutton"
+            android:layout_alignParentRight="true">
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/relativeLayout2">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_below="@+id/relativeLayout2"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:id="@+id/relativeLayout4"
+            android:layout_height="match_parent"
+            android:background="@drawable/shadow_borders"
+            android:layout_margin="10dp">
+
+            <tkhub.project.PrivacyNote.Font.FontSpalsh
+                android:text="Favorite Color ?"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView86"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="10dp"
+                android:textSize="18sp"
+                android:textColor="@color/colorAccent" />
+
+
+            <Button
+                android:text="Done"
+                android:layout_width="match_parent"
+                android:id="@+id/btn_done"
+                android:layout_height="50dp"
+                android:background="@drawable/button_blue"
+                android:textColor="@android:color/white"
+                android:layout_alignParentBottom="true"
+                android:layout_alignLeft="@+id/editText9"
+                android:layout_alignStart="@+id/editText9"
+                android:layout_margin="20dp" />
+
+            <com.jaredrummler.materialspinner.MaterialSpinner
+                app:ms_dropdown_height="wrap_content"
+                app:ms_text_color="@android:color/black"
+                android:id="@+id/spinner_color"
+                android:layout_below="@+id/textView86"
+                android:layout_alignLeft="@+id/textView86"
+                android:layout_alignStart="@+id/textView86"
+                android:layout_height="50dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:layout_width="match_parent"
+                android:layout_marginRight="10dp" />
+
+            <tkhub.project.PrivacyNote.Font.FontSpalsh
+                android:text="Favorite Sport ?"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView13"
+                android:layout_marginTop="5dp"
+                android:textSize="18sp"
+                android:textColor="@color/colorAccent"
+                android:layout_below="@+id/spinner_color"
+                android:layout_alignLeft="@+id/spinner_color"
+                android:layout_alignStart="@+id/spinner_color" />
+
+
+
+            <com.jaredrummler.materialspinner.MaterialSpinner
+                app:ms_dropdown_height="wrap_content"
+                app:ms_text_color="@android:color/black"
+                android:id="@+id/spinner_sport"
+                android:layout_below="@+id/textView13"
+                android:layout_alignLeft="@+id/textView13"
+                android:layout_alignStart="@+id/textView13"
+                android:layout_height="50dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:layout_width="match_parent"
+                android:layout_marginRight="10dp" />
+
+
+            <tkhub.project.PrivacyNote.Font.FontSpalsh
+                android:text="Born Year ?"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView14"
+                android:layout_marginTop="5dp"
+                android:textSize="18sp"
+                android:textColor="@color/colorAccent"
+                android:layout_below="@+id/spinner_sport"
+                android:layout_alignLeft="@+id/spinner_sport"
+                android:layout_alignStart="@+id/spinner_sport" />
+
+
+
+            <com.jaredrummler.materialspinner.MaterialSpinner
+                app:ms_dropdown_height="wrap_content"
+                app:ms_text_color="@android:color/black"
+                android:id="@+id/spinner_bornyear"
+                android:layout_below="@+id/textView14"
+                android:layout_alignLeft="@+id/textView14"
+                android:layout_alignStart="@+id/textView14"
+                android:layout_height="50dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:layout_width="match_parent"
+                android:layout_marginRight="10dp" />
+
+            <tkhub.project.PrivacyNote.Font.FontSpalsh
+                android:text="In what city were you born?"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView15"
+                android:layout_marginTop="5dp"
+                android:textSize="18sp"
+                android:textColor="@color/colorAccent"
+                android:layout_below="@+id/spinner_bornyear"
+                android:layout_alignLeft="@+id/spinner_bornyear"
+                android:layout_alignStart="@+id/spinner_bornyear" />
+
+
+            <EditText
+                android:id="@+id/edittext_city"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_below="@+id/textView15"
+                android:layout_alignLeft="@+id/textView15"
+                android:layout_marginRight="20dp"
+                android:layout_alignStart="@+id/textView15"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+
+                android:textColor="@color/appBlack" />
+
+
+
+
+
+
+        </RelativeLayout>
+
+
+    </RelativeLayout>
+
+
+</RelativeLayout>

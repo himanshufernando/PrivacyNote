@@ -28,4 +28,11 @@
     <string name="icon_lockopen">&#xf13e;</string>
     <string name="icon_navigation_sms">&#xf0e0;</string>
 
+
+    <array name="colors">
+        <item>Blue</item>
+        <item>Green</item>
+        <item>Red</item>
+    </array>
+
 </resources>

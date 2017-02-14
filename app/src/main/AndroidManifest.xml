@@ -25,6 +25,7 @@
         <activity android:name=".Layout.Password"/>
         <activity android:name=".Layout.Home"/>
         <activity android:name=".Layout.About"/>
+        <activity android:name=".Layout.SecurityQuestion"  android:windowSoftInputMode="stateHidden" />
 
     </application>
 

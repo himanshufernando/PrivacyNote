@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/appWhite">
+    android:layout_height="match_parent">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_alignParentTop="true"
         android:layout_height="60dip"
-        android:background="#0299e3"
+        android:background="@color/iconGreen"
         android:layout_alignParentStart="true"
         android:id="@+id/relativeLayoutTitleBar"
         android:layout_alignParentLeft="true">
@@ -22,15 +21,15 @@
             android:layout_alignParentStart="true">
 
             <ImageView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_centerHorizontal="true"
                 android:id="@+id/imageView13"
-                android:src="@drawable/previous"
-                android:layout_width="50dp" />
+               />
         </RelativeLayout>
 
-        <tkhub.project.PrivacyNote.Font.FontSpalsh
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
@@ -48,7 +47,7 @@
         android:layout_below="@+id/relativeLayoutTitleBar"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:background="@color/black_transparent">
+        android:background="@android:color/white">
 
         <RelativeLayout
             android:id="@+id/relativeLayout2"
@@ -66,7 +65,7 @@
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
                 android:textSize="50sp"
-                android:textColor="@color/iconBlue"
+                android:textColor="@color/colorPrimaryDark"
                 android:id="@+id/textView88" />
 
         </RelativeLayout>
@@ -81,7 +80,7 @@
             android:background="@drawable/shadow_borders"
             android:layout_margin="10dp">
 
-            <tkhub.project.PrivacyNote.Font.FontSpalsh
+            <TextView
                 android:text="Reset your password"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -92,9 +91,9 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginLeft="10dp"
                 android:textSize="18sp"
-                android:textColor="@color/appBlack" />
+                android:textColor="@color/colorAccent" />
 
-            <tkhub.project.PrivacyNote.Font.FontSpalsh
+            <TextView
                 android:text="Enter your reset code"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

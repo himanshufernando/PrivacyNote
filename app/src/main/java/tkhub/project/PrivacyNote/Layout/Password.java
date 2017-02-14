@@ -232,18 +232,6 @@ public class Password extends Activity implements Animation.AnimationListener {
                     passwordToBeconfirmd = "";
                 } else {
 
-                   /* t1.setText(R.string.icon_circle);
-                    t2.setText(R.string.icon_circle);
-                    t3.setText(R.string.icon_circle);
-                    t4.setText(R.string.icon_circle);
-
-                    password = "";
-                    confrimStatues = 0;
-                    resetStatues = 1;
-
-                    message.setTextColor(getResources().getColor(R.color.iconRed));
-                    checkPassword();
-                    message.setText("Please set the Password");*/
                 }
 
 
@@ -335,7 +323,16 @@ public class Password extends Activity implements Animation.AnimationListener {
                                 confrimStatues = 1;
                                 passwordToBeconfirmd = "";
                                 message.setText("");
-                                sucsessAccess();
+
+
+                                Intent intent = new Intent(Password.this, SecurityQuestion.class);
+                                intent.putExtra("PerantLayout",1);
+                                Bundle bndlanimation = ActivityOptions.makeCustomAnimation(Password.this, R.anim.animation, R.anim.animation2).toBundle();
+                                finish();
+                                startActivity(intent, bndlanimation);
+
+
+                              //  sucsessAccess();
                             }
                         });
                     } else {
@@ -440,6 +437,8 @@ public class Password extends Activity implements Animation.AnimationListener {
             public void run() {
 
                 dialogBox.dismiss();
+
+
                 Intent intent = new Intent(Password.this, Home.class);
                 Bundle bndlanimation = ActivityOptions.makeCustomAnimation(Password.this, R.anim.animation, R.anim.animation2).toBundle();
                 finish();
