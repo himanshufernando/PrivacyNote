@@ -75,26 +75,26 @@ public class Login extends Activity {
         setContentView(R.layout.activity_login);
 
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             try {
                 keyguardManager = (KeyguardManager) getSystemService(KEYGUARD_SERVICE);
                 fingerprintManager = (FingerprintManager) getSystemService(FINGERPRINT_SERVICE);
-                if (!fingerprintManager.isHardwareDetected()) {
+               if (!fingerprintManager.isHardwareDetected()) {
                     Intent intent = new Intent(Login.this, Password.class);
                     Bundle bndlanimation = ActivityOptions.makeCustomAnimation(Login.this, R.anim.animation, R.anim.animation2).toBundle();
                     finish();
                     startActivity(intent, bndlanimation);
                 }
-                else if (!keyguardManager.isKeyguardSecure()) {
+                 if (!keyguardManager.isKeyguardSecure()) {
                     Toast.makeText(this, "Lock screen security not enabled in Settings", Toast.LENGTH_LONG).show();
                     return;
                 }
 
-                else  if (ActivityCompat.checkSelfPermission(this, Manifest.permission.USE_FINGERPRINT) != PackageManager.PERMISSION_GRANTED) {
+                  if (ActivityCompat.checkSelfPermission(this, Manifest.permission.USE_FINGERPRINT) != PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(this, "Fingerprint authentication permission not enabled", Toast.LENGTH_LONG).show();
                     return;
                 }
-                else if (!fingerprintManager.hasEnrolledFingerprints()) {
+                 if (!fingerprintManager.hasEnrolledFingerprints()) {
                     Toast.makeText(this, "Register at least one fingerprint in Settings", Toast.LENGTH_LONG).show();
                     return;
                 }else {
@@ -105,11 +105,6 @@ public class Login extends Activity {
                         FingerprintHandler helper = new FingerprintHandler(this);
                         helper.startAuth(fingerprintManager, mCryptoObject);
 
-                    }else {
-                        Intent intent = new Intent(Login.this, Password.class);
-                        Bundle bndlanimation = ActivityOptions.makeCustomAnimation(Login.this, R.anim.animation, R.anim.animation2).toBundle();
-                        finish();
-                        startActivity(intent, bndlanimation);
                     }
                 }
 

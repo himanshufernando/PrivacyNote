@@ -3,9 +3,12 @@ package tkhub.project.PrivacyNote.Layout;
 import android.app.Activity;
 import android.app.ActivityOptions;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.TextView;
 
 import com.mikhaellopez.circularimageview.CircularImageView;
 
@@ -17,11 +20,23 @@ import tkhub.project.PrivacyNote.R;
 public class About extends Activity implements Animation.AnimationListener {
 
     CircularImageView imagLogo;
+    TextView versionName;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_about);
         imagLogo = (CircularImageView)findViewById(R.id.imageView_logo);
+
+        versionName = (TextView)findViewById(R.id.textView12);
+
+        try {
+            PackageManager manager = this.getPackageManager();
+            PackageInfo info = manager.getPackageInfo(this.getPackageName(), 0);
+            versionName.setText("Version "+info.versionName);
+
+        }catch (Exception ex){
+            versionName.setText("Version 1.0.0");
+        }
 
         final Animation animMovelaypot = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.animationtk);
         animMovelaypot.setAnimationListener(this);

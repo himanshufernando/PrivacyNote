@@ -149,6 +149,7 @@ public class Password extends Activity implements Animation.AnimationListener {
 
 
         restore = (Button)findViewById(R.id.btnrestore);
+        restore.setTypeface(tf);
         restore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -19,6 +19,7 @@ import android.hardware.fingerprint.FingerprintManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.Process;
 import android.os.Vibrator;
 import android.security.keystore.KeyGenParameterSpec;
@@ -84,6 +85,7 @@ import tkhub.project.PrivacyNote.DB.NoteDB;
 import tkhub.project.PrivacyNote.DB.ResetDB;
 import tkhub.project.PrivacyNote.Font.TextViewFontAwesome;
 import tkhub.project.PrivacyNote.R;
+import tkhub.project.PrivacyNote.Servies.FingerprintHandler;
 import tkhub.project.PrivacyNote.Servies.FingerprintHandler2;
 import tkhub.project.PrivacyNote.Servies.FingerprintHandler3;
 
@@ -202,7 +204,10 @@ public class Home extends Activity implements Animation.AnimationListener {
 
         mNavItems.add(new NavigationDrawerItem("Home", R.string.icon_navigation_home));
         mNavItems.add(new NavigationDrawerItem("Backup", R.string.icon_navigation_backup));
-        mNavItems.add(new NavigationDrawerItem("Password Reset", R.string.icon_navigation_reset));
+        if(isFingerprintEnable()){
+        }else {
+            mNavItems.add(new NavigationDrawerItem("Password Reset", R.string.icon_navigation_reset));
+        }
         mNavItems.add(new NavigationDrawerItem("About", R.string.icon_navigation_about));
 
 
@@ -229,11 +234,20 @@ public class Home extends Activity implements Animation.AnimationListener {
                 }
                 if (position == 2) {
 
-                    Intent intent = new Intent(Home.this, SecurityQuestion.class);
-                    intent.putExtra("PerantLayout",2);
-                    Bundle bndlanimation = ActivityOptions.makeCustomAnimation(Home.this, R.anim.animation, R.anim.animation2).toBundle();
-                    finish();
-                    startActivity(intent, bndlanimation);
+                    if(isFingerprintEnable()){
+                        Intent i = new Intent(Home.this, About.class);
+                        Bundle bndlanimation = ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.animation, R.anim.animation2).toBundle();
+                        finish();
+                        startActivity(i, bndlanimation);
+                    }else {
+                        Intent intent = new Intent(Home.this, SecurityQuestion.class);
+                        intent.putExtra("PerantLayout",2);
+                        Bundle bndlanimation = ActivityOptions.makeCustomAnimation(Home.this, R.anim.animation, R.anim.animation2).toBundle();
+                        finish();
+                        startActivity(intent, bndlanimation);
+                    }
+
+
                 }
                 if (position == 3) {
                     Intent i = new Intent(Home.this, About.class);
@@ -1240,6 +1254,40 @@ public class Home extends Activity implements Animation.AnimationListener {
                 .withFilterDirectories(true) // Set directories filterable (false by default)
                 .withHiddenFiles(true) // Show hidden files and folders
                 .start();
+    }
+
+    public boolean isFingerprintEnable(){
+
+        boolean result = false;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            try {
+                keyguardManager = (KeyguardManager) getSystemService(KEYGUARD_SERVICE);
+                fingerprintManager = (FingerprintManager) getSystemService(FINGERPRINT_SERVICE);
+                if (!fingerprintManager.isHardwareDetected()) {
+                    result = false;
+                }
+                else if (!keyguardManager.isKeyguardSecure()) {
+                    result = false;
+                }
+
+                else  if (ActivityCompat.checkSelfPermission(this, Manifest.permission.USE_FINGERPRINT) != PackageManager.PERMISSION_GRANTED) {
+                    result = false;
+                }
+                else if (!fingerprintManager.hasEnrolledFingerprints()) {
+                    result = false;
+                }else {
+                    result = true;
+                }
+
+
+
+            }catch (NoClassDefFoundError noclass){
+                result = false;
+            }
+        }else {
+            result = false;
+        }
+        return result;
     }
 
 }

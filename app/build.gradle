@@ -9,7 +9,7 @@ android {
         minSdkVersion 16
         targetSdkVersion 24
         versionCode 1
-        versionName "1.0"
+        versionName "1.0.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
@@ -30,7 +30,7 @@ buildscript {
 
     }
     dependencies {
-        classpath "io.realm:realm-gradle-plugin:2.0.2"
+        classpath "io.realm:realm-gradle-plugin:3.0.0"
     }
 }
 repositories {

@@ -75,4 +75,13 @@
         android:layout_marginTop="10dip"
         android:id="@+id/textView11" />
 
+    <tkhub.project.PrivacyNote.Font.FontSpalsh
+        android:text="TextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/textView"
+        android:textColor="@color/appFont"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/textView12" />
+
 </RelativeLayout>
