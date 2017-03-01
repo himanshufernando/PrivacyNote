@@ -155,7 +155,7 @@ public class Home extends Activity implements Animation.AnimationListener {
 
     private FingerprintManager.CryptoObject mCryptoObject;
 
-    private File EXPORT_REALM_PATH = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
+    private File EXPORT_REALM_PATH ;
     private String EXPORT_REALM_FILE_NAME = "privacynotebackup.realm";
     private String IMPORT_REALM_FILE_NAME = "default.realm";
 
@@ -187,6 +187,14 @@ public class Home extends Activity implements Animation.AnimationListener {
         tf = Typeface.createFromAsset(getAssets(), "Font/Comfortaa-Light.ttf");
 
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            EXPORT_REALM_PATH = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
+        }else {
+            EXPORT_REALM_PATH = new File(Environment.getExternalStorageDirectory() + "/Documents");
+        }
+
+
+
         mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         autoText = (AutoCompleteTextView) findViewById(R.id.autoCompleteTextView);
 
@@ -194,7 +202,6 @@ public class Home extends Activity implements Animation.AnimationListener {
 
         mNavItems.add(new NavigationDrawerItem("Home", R.string.icon_navigation_home));
         mNavItems.add(new NavigationDrawerItem("Backup", R.string.icon_navigation_backup));
-        mNavItems.add(new NavigationDrawerItem("Restore", R.string.icon_navigation_restore));
         mNavItems.add(new NavigationDrawerItem("Password Reset", R.string.icon_navigation_reset));
         mNavItems.add(new NavigationDrawerItem("About", R.string.icon_navigation_about));
 
@@ -208,6 +215,7 @@ public class Home extends Activity implements Animation.AnimationListener {
         navigationList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (position == 0) {
+                    dLayout.closeDrawer(Gravity.LEFT);
                 }
                 if (position == 1) {
                     if (!checkPermission()) {
@@ -221,24 +229,13 @@ public class Home extends Activity implements Animation.AnimationListener {
                 }
                 if (position == 2) {
 
-                    if (!checkPermissionRead()) {
-                        requestPermissionRead();
-                    } else {
-                       readeBackup();
-                    }
-
-
-
-                }
-                if (position == 3) {
-
                     Intent intent = new Intent(Home.this, SecurityQuestion.class);
                     intent.putExtra("PerantLayout",2);
                     Bundle bndlanimation = ActivityOptions.makeCustomAnimation(Home.this, R.anim.animation, R.anim.animation2).toBundle();
                     finish();
                     startActivity(intent, bndlanimation);
                 }
-                if (position == 4) {
+                if (position == 3) {
                     Intent i = new Intent(Home.this, About.class);
                     Bundle bndlanimation = ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.animation, R.anim.animation2).toBundle();
                     finish();
@@ -275,6 +272,7 @@ public class Home extends Activity implements Animation.AnimationListener {
             public void onClick(View v) {
                 layoutSearch.setVisibility(View.INVISIBLE);
                 searchBtn.setVisibility(View.VISIBLE);
+                setAllNote();
             }
         });
 
@@ -345,6 +343,25 @@ public class Home extends Activity implements Animation.AnimationListener {
                             username.setText("");
                             password.setText("");
                             other.setText("");
+
+                            layoutView.setVisibility(View.VISIBLE);
+                            layoutAdd.setVisibility(View.INVISIBLE);
+                            backStatus = false;
+                            noteItems.clear();
+                            for (NoteDB no : mRealm.where(NoteDB.class).equalTo("allowe", 0).findAll()) {
+                                noteItems.add(new NoteItem(no.getId(), no.getTitle(), no.getUserName(),
+                                        no.getPassword(), no.getOther()));
+
+                            }
+
+                            eventList.setAdapter(notAdapter);
+                            titleList.clear();
+                            for (NoteDB no : mRealm.where(NoteDB.class).findAll()) {
+                                titleList.add(no.getTitle());
+
+                            }
+                            setAutotext(titleList);
+
                         }
                     });
 
@@ -356,6 +373,10 @@ public class Home extends Activity implements Animation.AnimationListener {
 
     }
 
+    public void setAutotext(List<String> tiList){
+        ArrayAdapter<String> titleAdapterList = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, tiList);
+        autoText.setAdapter(titleAdapterList);
+    }
     public void setAllNote(){
 
         noteItems.clear();
@@ -1058,17 +1079,7 @@ public class Home extends Activity implements Animation.AnimationListener {
             byte[] buf = new byte[1024];
             int bytesRead;
 
-          /*  mRealm.executeTransaction(new Realm.Transaction() {
-                @Override
-                public void execute(Realm realm) {
-                    final Long tableSize = mRealm.where(ResetDB.class).count();
-                    Object primaryKeyValue = tableSize + 1;
-                    ResetDB userAdd = realm.createObject(ResetDB.class, primaryKeyValue);
-                    userAdd.setPassword("123");
 
-                }
-            });
-*/
 
             while ((bytesRead = inputStream.read(buf)) > 0) {
                 outputStream.write(buf, 0, bytesRead);
@@ -1171,19 +1182,23 @@ public class Home extends Activity implements Animation.AnimationListener {
         if (requestCode == 1 && resultCode == RESULT_OK) {
             String filePath = data.getStringExtra(FilePickerActivity.RESULT_FILE_PATH);
            copyBundledRealmFile(filePath, IMPORT_REALM_FILE_NAME);
+
+            new AlertDialog.Builder(Home.this)
+                    .setTitle("Restore Successfully")
+                    .setMessage("Database restore successfully,please restart the app and reset your password")
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Process.killProcess(Process.myPid());
+                        }
+                    })
+                    .create()
+                    .show();
+        }else {
+            dLayout.closeDrawer(Gravity.LEFT);
         }
 
-        new AlertDialog.Builder(Home.this)
-                .setTitle("Restore Successfully")
-                .setMessage("Database restore successfully,please restart the app and reset your password")
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Process.killProcess(Process.myPid());
-                    }
-                })
-                .create()
-                .show();
+
     }
 
     private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
@@ -1207,7 +1222,11 @@ public class Home extends Activity implements Animation.AnimationListener {
         new AlertDialog.Builder(Home.this)
                 .setTitle("Backup Successful")
                 .setMessage(msg)
-                .setPositiveButton("OK",null)
+                .setPositiveButton("Ok",new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,int id) {
+                        dLayout.closeDrawer(Gravity.LEFT);
+                    }
+                })
                 .create()
                 .show();
 

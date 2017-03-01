@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.ActivityOptions;
 import android.app.Dialog;
 import android.app.KeyguardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -78,33 +79,42 @@ public class Login extends Activity {
             try {
                 keyguardManager = (KeyguardManager) getSystemService(KEYGUARD_SERVICE);
                 fingerprintManager = (FingerprintManager) getSystemService(FINGERPRINT_SERVICE);
-
-                if (!keyguardManager.isKeyguardSecure()) {
+                if (!fingerprintManager.isHardwareDetected()) {
+                    Intent intent = new Intent(Login.this, Password.class);
+                    Bundle bndlanimation = ActivityOptions.makeCustomAnimation(Login.this, R.anim.animation, R.anim.animation2).toBundle();
+                    finish();
+                    startActivity(intent, bndlanimation);
+                }
+                else if (!keyguardManager.isKeyguardSecure()) {
                     Toast.makeText(this, "Lock screen security not enabled in Settings", Toast.LENGTH_LONG).show();
                     return;
                 }
 
-                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.USE_FINGERPRINT) != PackageManager.PERMISSION_GRANTED) {
+                else  if (ActivityCompat.checkSelfPermission(this, Manifest.permission.USE_FINGERPRINT) != PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(this, "Fingerprint authentication permission not enabled", Toast.LENGTH_LONG).show();
                     return;
                 }
-
-                if (!fingerprintManager.hasEnrolledFingerprints()) {
+                else if (!fingerprintManager.hasEnrolledFingerprints()) {
                     Toast.makeText(this, "Register at least one fingerprint in Settings", Toast.LENGTH_LONG).show();
                     return;
+                }else {
+                    generateKey();
+
+                    if (cipherInit()) {
+                        mCryptoObject = new FingerprintManager.CryptoObject(mCipher);
+                        FingerprintHandler helper = new FingerprintHandler(this);
+                        helper.startAuth(fingerprintManager, mCryptoObject);
+
+                    }else {
+                        Intent intent = new Intent(Login.this, Password.class);
+                        Bundle bndlanimation = ActivityOptions.makeCustomAnimation(Login.this, R.anim.animation, R.anim.animation2).toBundle();
+                        finish();
+                        startActivity(intent, bndlanimation);
+                    }
                 }
 
 
-                generateKey();
 
-
-
-                if (cipherInit()) {
-                    mCryptoObject = new FingerprintManager.CryptoObject(mCipher);
-                    FingerprintHandler helper = new FingerprintHandler(this);
-                    helper.startAuth(fingerprintManager, mCryptoObject);
-
-                }
             }catch (NoClassDefFoundError noclass){
                 Toast.makeText(this, "No Fingerprint Feature", Toast.LENGTH_LONG).show();
                 layoutPass=(RelativeLayout)findViewById(R.id.relativeLayout6);

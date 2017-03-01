@@ -1,17 +1,25 @@
 package tkhub.project.PrivacyNote.Layout;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.ActivityOptions;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Process;
 import android.os.Vibrator;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.view.animation.Animation;
@@ -19,6 +27,14 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.nbsp.materialfilepicker.MaterialFilePicker;
+import com.nbsp.materialfilepicker.ui.FilePickerActivity;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
@@ -32,7 +48,7 @@ import tkhub.project.PrivacyNote.R;
  */
 public class Password extends Activity implements Animation.AnimationListener {
 
-    Button one, two, three, four, five, six, seven, eight, nine, zero, reset, back;
+    Button one, two, three, four, five, six, seven, eight, nine, zero, reset, back,restore;
     private Vibrator mVibrator;
 
     TextViewFontAwesome t1, t2, t3, t4;
@@ -50,6 +66,10 @@ public class Password extends Activity implements Animation.AnimationListener {
     int confrimStatues = 0;
     int resetStatues = 0;
     int status;
+    int resetype;
+    private String IMPORT_REALM_FILE_NAME = "default.realm";
+
+    private static final int MY_PERMISSIONS_REQUEST_EXTERNAL_STORAGE_READ = 124;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +79,8 @@ public class Password extends Activity implements Animation.AnimationListener {
 
         Typeface tf = Typeface.createFromAsset(getAssets(), "Font/Comfortaa-Light.ttf");
         mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+
+        resetype =getIntent().getIntExtra("resetype",0);
 
         t1 = (TextViewFontAwesome) findViewById(R.id.textView_icon_1);
         t2 = (TextViewFontAwesome) findViewById(R.id.textView_icon_2);
@@ -124,6 +146,20 @@ public class Password extends Activity implements Animation.AnimationListener {
 
         back = (Button) findViewById(R.id.btnBack);
         back.setTypeface(tf);
+
+
+        restore = (Button)findViewById(R.id.btnrestore);
+        restore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!checkPermissionRead()) {
+                    requestPermissionRead();
+                } else {
+                    readeBackup();
+                }
+
+            }
+        });
 
 
         one.setOnClickListener(new View.OnClickListener() {
@@ -232,6 +268,12 @@ public class Password extends Activity implements Animation.AnimationListener {
                     passwordToBeconfirmd = "";
                 } else {
 
+                    Intent intent = new Intent(Password.this, SecurityQuestion.class);
+                    intent.putExtra("PerantLayout",2);
+                    Bundle bndlanimation = ActivityOptions.makeCustomAnimation(Password.this, R.anim.animation, R.anim.animation2).toBundle();
+                    finish();
+                    startActivity(intent, bndlanimation);
+
                 }
 
 
@@ -323,10 +365,15 @@ public class Password extends Activity implements Animation.AnimationListener {
                                 confrimStatues = 1;
                                 passwordToBeconfirmd = "";
                                 message.setText("");
+                                Intent intent;
 
+                                if(resetype==1){
+                                     intent = new Intent(Password.this, Home.class);
+                                }else {
+                                     intent = new Intent(Password.this, SecurityQuestion.class);
+                                     intent.putExtra("PerantLayout",1);
+                                }
 
-                                Intent intent = new Intent(Password.this, SecurityQuestion.class);
-                                intent.putExtra("PerantLayout",1);
                                 Bundle bndlanimation = ActivityOptions.makeCustomAnimation(Password.this, R.anim.animation, R.anim.animation2).toBundle();
                                 finish();
                                 startActivity(intent, bndlanimation);
@@ -448,5 +495,102 @@ public class Password extends Activity implements Animation.AnimationListener {
 
 
     }
+    private boolean checkPermissionRead() {
+        int result = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE);
+        return result == PackageManager.PERMISSION_GRANTED;
+    }
+    private void requestPermissionRead() {
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_EXTERNAL_STORAGE_READ);
+    }
+
+
+    @Override
+    public void onBackPressed() {
+
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(Password.this);
+            alertDialog.setTitle("Exit");
+            alertDialog.setMessage("Are you sure you want Exit ?");
+            alertDialog.setIcon(R.drawable.fingerprint);
+            alertDialog.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    finish();
+                    System.exit(0);
+                }
+            });
+            alertDialog.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+            alertDialog.show();
+
+
+
+    }
+    public void readeBackup(){
+        new MaterialFilePicker()
+                .withActivity(Password.this)
+                .withRequestCode(1)
+                .withFilterDirectories(true) // Set directories filterable (false by default)
+                .withHiddenFiles(true) // Show hidden files and folders
+                .start();
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+
+
+        SharedPreferences sharedPref = getApplicationContext().getSharedPreferences("MyPref", 0);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putInt("01",255);
+        editor.commit();
+
+
+        if (requestCode == 1 && resultCode == RESULT_OK) {
+            String filePath = data.getStringExtra(FilePickerActivity.RESULT_FILE_PATH);
+            copyBundledRealmFile(filePath, IMPORT_REALM_FILE_NAME);
+
+            new android.support.v7.app.AlertDialog.Builder(Password.this)
+                    .setTitle("Restore Successfully")
+                    .setMessage("Database restore successfully,please restart the app and reset your password")
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Process.killProcess(Process.myPid());
+                        }
+                    })
+                    .create()
+                    .show();
+        }else {
+
+        }
+
+
+    }
+    private String copyBundledRealmFile(String oldFilePath, String outFileName) {
+        try {
+            File file = new File(Password.this.getFilesDir(), outFileName);
+
+            FileOutputStream outputStream = new FileOutputStream(file);
+
+            FileInputStream inputStream = new FileInputStream(new File(oldFilePath));
+
+            byte[] buf = new byte[1024];
+            int bytesRead;
+
+
+
+            while ((bytesRead = inputStream.read(buf)) > 0) {
+                outputStream.write(buf, 0, bytesRead);
+            }
+            outputStream.close();
+            return file.getAbsolutePath();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 
 }

@@ -2,8 +2,11 @@ package tkhub.project.PrivacyNote.Layout;
 
 import android.app.Activity;
 import android.app.ActivityOptions;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -65,7 +68,7 @@ public class SecurityQuestion extends Activity {
                 "Lavender", "Vermilion", "Teal", "Beige", "Rose");
 
 
-        spinnerSport.setItems("Select Your sport", "Basketball", "Basketball", "Tennis", "Baseball", "Football", "Cricket", "Badminton", "American football", "Golf", "Rugby football", "Volleyball", "Ice hockey", "Ice skating", "Gymnastics", "Bowling", "Skiing", "Boxing",
+        spinnerSport.setItems("Select Your sport", "Basketball", "Tennis", "Baseball", "Football", "Cricket", "Badminton", "American football", "Golf", "Rugby football", "Volleyball", "Ice hockey", "Ice skating", "Gymnastics", "Bowling", "Skiing", "Boxing",
                 "Softball", "Martial arts", "Surfing", "Netball", "Water polo", "Figure skating", "Polo", "Snowboarding", "Walking", "Squash", "Motorsport", "Field hockey", "Rugby", "Table tennis", "Skateboarding", "Lacrosse", "Karate", "Climbing", "Equestrianism", "Roller skating", "Triathlon", "Running",
                 "Swimming", "Cycling", "Wrestling");
 
@@ -137,14 +140,45 @@ public class SecurityQuestion extends Activity {
                                         equalTo("city", city).count();
 
                                 if (ap == 0) {
-                                    //meesage
+
+                                    String message = null;
+                                    Long colorCount = mRealm.where(SecurityDB.class).equalTo("color", color).count();
+                                   if(colorCount ==0){
+                                       message ="You'r favorite color";
+                                   }else {
+                                       Long sportCount = mRealm.where(SecurityDB.class).equalTo("sport", sport).count();
+                                       if(sportCount==0){
+                                           message ="You'r favorite sport";
+                                       }else {
+                                           Long yearCount = mRealm.where(SecurityDB.class).equalTo("year", year).count();
+                                           if(yearCount==0){
+                                               message ="You'r born year";
+                                           }else {
+                                               Long cityCount = mRealm.where(SecurityDB.class).equalTo("city", city).count();
+                                               if(cityCount==0){
+                                                   message ="You'r born city";
+                                               }else {
+
+                                               }
+                                           }
+                                       }
+                                   }
+                                    new android.support.v7.app.AlertDialog.Builder(SecurityQuestion.this)
+                                            .setTitle("Security Question")
+                                            .setMessage(message+" is wrong, Please try again")
+                                            .setPositiveButton("OK",new DialogInterface.OnClickListener() {
+                                                public void onClick(DialogInterface dialog,int id) {
+                                                    dialog.cancel();
+                                                }
+                                            })
+                                            .create()
+                                            .show();
+
                                 } else {
                                     final RealmResults<AppuserDB> results = realm.where(AppuserDB.class).findAll();
-
                                     results.deleteAllFromRealm();
-                                   
-
                                     Intent intent = new Intent(SecurityQuestion.this, Password.class);
+                                    intent.putExtra("resetype",1);
                                     Bundle bndlanimation = ActivityOptions.makeCustomAnimation(SecurityQuestion.this, R.anim.animation, R.anim.animation2).toBundle();
                                     finish();
                                     startActivity(intent, bndlanimation);
@@ -173,4 +207,46 @@ public class SecurityQuestion extends Activity {
         }
         spinnerYear.setItems(yearList);
     }
+
+    @Override
+    public void onBackPressed() {
+
+        if(parentLayout == 1){
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(SecurityQuestion.this);
+            alertDialog.setTitle("Exit");
+            alertDialog.setMessage("Are you sure you want Exit ? if you exit you nedd to set password again");
+            alertDialog.setIcon(R.drawable.fingerprint);
+            alertDialog.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    mRealm.executeTransaction(new Realm.Transaction() {
+                        @Override
+                        public void execute(Realm realm) {
+                            final RealmResults<AppuserDB> results = realm.where(AppuserDB.class).findAll();
+                            results.deleteAllFromRealm();
+                        }
+                    });
+
+                    finish();
+                    System.exit(0);
+                }
+            });
+            alertDialog.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+            alertDialog.show();
+        }else {
+            Intent intent = new Intent(SecurityQuestion.this, Home.class);
+            Bundle bndlanimation = ActivityOptions.makeCustomAnimation(SecurityQuestion.this, R.anim.animation, R.anim.animation2).toBundle();
+            finish();
+            startActivity(intent, bndlanimation);
+        }
+
+
+
+
+
+    }
+
 }
