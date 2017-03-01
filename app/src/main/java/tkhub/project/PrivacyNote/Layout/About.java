@@ -35,7 +35,7 @@ public class About extends Activity implements Animation.AnimationListener {
             versionName.setText("Version "+info.versionName);
 
         }catch (Exception ex){
-            versionName.setText("Version 1.0.0");
+            versionName.setText("Version 1.0.0 ");
         }
 
         final Animation animMovelaypot = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.animationtk);
