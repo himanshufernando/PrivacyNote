@@ -6,6 +6,7 @@ import android.app.ActivityOptions;
 import android.app.Dialog;
 import android.app.KeyguardManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -14,6 +15,7 @@ import android.hardware.fingerprint.FingerprintManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Process;
 import android.security.keystore.KeyGenParameterSpec;
 
 import android.security.keystore.KeyProperties;
@@ -42,6 +44,9 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.inject.Inject;
 
+import io.realm.Realm;
+import tkhub.project.PrivacyNote.DB.AppuserDB;
+import tkhub.project.PrivacyNote.DB.ShowcastDB;
 import tkhub.project.PrivacyNote.R;
 import tkhub.project.PrivacyNote.Servies.FingerprintHandler;
 
@@ -66,6 +71,8 @@ public class Login extends Activity {
 
     RelativeLayout layoutPass;
 
+    private Realm mRealm;
+
 
     private FingerprintManager.CryptoObject mCryptoObject;
 
@@ -74,6 +81,9 @@ public class Login extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+
+        Realm.init(this);
+        mRealm = Realm.getDefaultInstance();
 
        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             try {
@@ -98,6 +108,35 @@ public class Login extends Activity {
                     Toast.makeText(this, "Register at least one fingerprint in Settings", Toast.LENGTH_LONG).show();
                     return;
                 }else {
+                     Toast.makeText(this, "Use your Fingerprint to login", Toast.LENGTH_SHORT).show();
+                     final Long tableSize = mRealm.where(ShowcastDB.class).count();
+
+                     if(tableSize==0){
+                         new android.support.v7.app.AlertDialog.Builder(Login.this)
+                                 .setMessage("Please use your Fingerprint to login")
+                                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                     @Override
+                                     public void onClick(DialogInterface dialog, int which) {
+                                         return;
+                                     }
+                                 })
+                                 .create()
+                                 .show();
+                     }else {
+                         System.out.println("sdssdsd");
+                     }
+
+
+                     mRealm.executeTransaction(new Realm.Transaction() {
+                         @Override
+                         public void execute(Realm realm) {
+                             ShowcastDB showcast = realm.createObject(ShowcastDB.class);
+                             showcast.setId(1);
+                             showcast.setCount(5);
+                         }
+                     });
+
+
                     generateKey();
 
                     if (cipherInit()) {

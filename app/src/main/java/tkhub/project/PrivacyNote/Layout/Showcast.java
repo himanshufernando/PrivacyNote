@@ -75,16 +75,6 @@ public class Showcast extends AhoyOnboarderActivity {
     @Override
     public void onFinishButtonPressed() {
 
-        mRealm.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                ShowcastDB showcast = realm.createObject(ShowcastDB.class);
-                showcast.setId(1);
-                showcast.setCount(5);
-            }
-        });
-
-
 
         Intent intent = new Intent(Showcast.this, Login.class);
         Bundle bndlanimation = ActivityOptions.makeCustomAnimation(Showcast.this, R.anim.animation, R.anim.animation2).toBundle();
