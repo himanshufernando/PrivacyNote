@@ -3,7 +3,7 @@
 
     //icon
     <string name="icon_suitcase">&#xf0f2;</string>
-    <string name="icon_delete_tag">&#xf02c;</string>
+    <string name="icon_delete_tag">&#xf014;</string>
     <string name="hint_search">Searching for…</string>
     <string name="search_description">City, Cities</string>
 
@@ -34,5 +34,7 @@
         <item>Green</item>
         <item>Red</item>
     </array>
+
+
 
 </resources>

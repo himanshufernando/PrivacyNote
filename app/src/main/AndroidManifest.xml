@@ -9,6 +9,7 @@
 
 
     <application
+        android:name=".PrivacyNote"
         android:allowBackup="true"
         android:icon="@mipmap/unlock"
         android:label="@string/app_name"
