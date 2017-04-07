@@ -1,4 +1,4 @@
-package tkhub.project.PrivacyNote.Layout;
+package tkhub.project.PrivacyNote.ui.actitvity;
 
 import android.app.ActivityOptions;
 import android.content.Intent;
@@ -12,14 +12,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.realm.Realm;
-import tkhub.project.PrivacyNote.DB.ShowcastDB;
 import tkhub.project.PrivacyNote.R;
+import tkhub.project.PrivacyNote.data.database.ShowcastDB;
 
 /**
  * Created by Himanshu on 10/15/2016.
  */
 
-public class Showcast extends AhoyOnboarderActivity {
+public class ShowcastActivity extends AhoyOnboarderActivity {
 
     private Realm mRealm;
     Long tableSize;
@@ -63,8 +63,8 @@ public class Showcast extends AhoyOnboarderActivity {
 
             setOnboardPages(pages);
         }else {
-            Intent intent = new Intent(Showcast.this, Login.class);
-            Bundle bndlanimation = ActivityOptions.makeCustomAnimation(Showcast.this, R.anim.animation, R.anim.animation2).toBundle();
+            Intent intent = new Intent(ShowcastActivity.this, LoginActivity.class);
+            Bundle bndlanimation = ActivityOptions.makeCustomAnimation(ShowcastActivity.this, R.anim.animation, R.anim.animation2).toBundle();
             finish();
             startActivity(intent, bndlanimation);
         }
@@ -76,8 +76,8 @@ public class Showcast extends AhoyOnboarderActivity {
     public void onFinishButtonPressed() {
 
 
-        Intent intent = new Intent(Showcast.this, Login.class);
-        Bundle bndlanimation = ActivityOptions.makeCustomAnimation(Showcast.this, R.anim.animation, R.anim.animation2).toBundle();
+        Intent intent = new Intent(ShowcastActivity.this, LoginActivity.class);
+        Bundle bndlanimation = ActivityOptions.makeCustomAnimation(ShowcastActivity.this, R.anim.animation, R.anim.animation2).toBundle();
         finish();
         startActivity(intent, bndlanimation);
     }

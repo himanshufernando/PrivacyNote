@@ -1,4 +1,4 @@
-package tkhub.project.PrivacyNote.DB;
+package tkhub.project.PrivacyNote.data.database;
 
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;

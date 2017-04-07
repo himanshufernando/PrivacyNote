@@ -13,7 +13,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import tkhub.project.PrivacyNote.Font.TextViewFontAwesome;
+import tkhub.project.PrivacyNote.ui.font.TextViewFontAwesome;
 import tkhub.project.PrivacyNote.R;
 
 /**
@@ -24,6 +24,7 @@ public class NavigationDrawer extends BaseAdapter {
     Context mContext;
     ArrayList<NavigationDrawerItem> mNavItems;
     private int selectedItem = -1;
+    private ItemClickListener itemClickListener;
 
     public NavigationDrawer(Context context, ArrayList<NavigationDrawerItem> navItems) {
         mContext = context;
@@ -71,8 +72,12 @@ public class NavigationDrawer extends BaseAdapter {
 
         }
     }
-
-    public void setSelectedItem(int selectedItem) {
-        this.selectedItem = selectedItem;
+    public void setItemClickListener(ItemClickListener itemClickListener) {
+        this.itemClickListener = itemClickListener;
     }
+
+    public interface ItemClickListener {
+        void onItemClick(NavigationDrawerItem drawerItem, int position);
+    }
+
 }

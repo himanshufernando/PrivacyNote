@@ -1,11 +1,10 @@
-package tkhub.project.PrivacyNote.Layout;
+package tkhub.project.PrivacyNote.ui.actitvity;
 
 import android.Manifest;
 import android.app.Activity;
 import android.app.ActivityOptions;
 import android.app.Dialog;
 import android.app.KeyguardManager;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -15,9 +14,7 @@ import android.hardware.fingerprint.FingerprintManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Process;
 import android.security.keystore.KeyGenParameterSpec;
-
 import android.security.keystore.KeyProperties;
 import android.support.v4.app.ActivityCompat;
 import android.view.View;
@@ -29,32 +26,28 @@ import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.KeyStore;
-
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
-
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
-
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.inject.Inject;
 
 import io.realm.Realm;
-import tkhub.project.PrivacyNote.DB.AppuserDB;
-import tkhub.project.PrivacyNote.DB.ShowcastDB;
 import tkhub.project.PrivacyNote.R;
 import tkhub.project.PrivacyNote.Servies.FingerprintHandler;
+import tkhub.project.PrivacyNote.data.database.ShowcastDB;
 
 /**
  * Created by Himanshu on 10/16/2016.
  */
 
-public class Login extends Activity {
+public class LoginActivity extends Activity {
 
     private static final String KEY_NAME = "my_key";
 
@@ -90,8 +83,8 @@ public class Login extends Activity {
                 keyguardManager = (KeyguardManager) getSystemService(KEYGUARD_SERVICE);
                 fingerprintManager = (FingerprintManager) getSystemService(FINGERPRINT_SERVICE);
                if (!fingerprintManager.isHardwareDetected()) {
-                    Intent intent = new Intent(Login.this, Password.class);
-                    Bundle bndlanimation = ActivityOptions.makeCustomAnimation(Login.this, R.anim.animation, R.anim.animation2).toBundle();
+                    Intent intent = new Intent(LoginActivity.this, PasswordActivity.class);
+                    Bundle bndlanimation = ActivityOptions.makeCustomAnimation(LoginActivity.this, R.anim.animation, R.anim.animation2).toBundle();
                     finish();
                     startActivity(intent, bndlanimation);
                 }
@@ -112,7 +105,7 @@ public class Login extends Activity {
                      final Long tableSize = mRealm.where(ShowcastDB.class).count();
 
                      if(tableSize==0){
-                         new android.support.v7.app.AlertDialog.Builder(Login.this)
+                         new android.support.v7.app.AlertDialog.Builder(LoginActivity.this)
                                  .setMessage("Please use your Fingerprint to login")
                                  .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                      @Override
@@ -155,8 +148,8 @@ public class Login extends Activity {
                 layoutPass.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(Login.this, Password.class);
-                        Bundle bndlanimation = ActivityOptions.makeCustomAnimation(Login.this, R.anim.animation, R.anim.animation2).toBundle();
+                        Intent intent = new Intent(LoginActivity.this, PasswordActivity.class);
+                        Bundle bndlanimation = ActivityOptions.makeCustomAnimation(LoginActivity.this, R.anim.animation, R.anim.animation2).toBundle();
                         finish();
                         startActivity(intent, bndlanimation);
                     }
@@ -168,8 +161,8 @@ public class Login extends Activity {
             new Handler().postDelayed(new Runnable() {
                 public void run() {
 
-                     Intent intent = new Intent(Login.this, Password.class);
-                      Bundle bndlanimation = ActivityOptions.makeCustomAnimation(Login.this, R.anim.animation, R.anim.animation2).toBundle();
+                     Intent intent = new Intent(LoginActivity.this, PasswordActivity.class);
+                      Bundle bndlanimation = ActivityOptions.makeCustomAnimation(LoginActivity.this, R.anim.animation, R.anim.animation2).toBundle();
                       finish();
                      startActivity(intent, bndlanimation);
                 }
@@ -180,8 +173,8 @@ public class Login extends Activity {
         layoutPass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Login.this, Password.class);
-                Bundle bndlanimation = ActivityOptions.makeCustomAnimation(Login.this, R.anim.animation, R.anim.animation2).toBundle();
+                Intent intent = new Intent(LoginActivity.this, PasswordActivity.class);
+                Bundle bndlanimation = ActivityOptions.makeCustomAnimation(LoginActivity.this, R.anim.animation, R.anim.animation2).toBundle();
                 finish();
                 startActivity(intent, bndlanimation);
             }
@@ -263,7 +256,7 @@ public class Login extends Activity {
     public void sucsessAccess() {
 
         final Dialog dialogBox;
-        dialogBox =new Dialog(Login.this);
+        dialogBox =new Dialog(LoginActivity.this);
         dialogBox.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialogBox.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialogBox.setContentView(R.layout.dilaog_progress);
@@ -274,8 +267,8 @@ public class Login extends Activity {
             public void run() {
 
                 dialogBox.dismiss();
-                Intent intent = new Intent(Login.this, Home.class);
-                Bundle bndlanimation = ActivityOptions.makeCustomAnimation(Login.this, R.anim.animation, R.anim.animation2).toBundle();
+                Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                Bundle bndlanimation = ActivityOptions.makeCustomAnimation(LoginActivity.this, R.anim.animation, R.anim.animation2).toBundle();
                 finish();
                 startActivity(intent, bndlanimation);
             }

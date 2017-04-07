@@ -22,7 +22,7 @@
             android:id="@+id/relativeLayout4"
             android:layout_alignParentLeft="true">
 
-            <tkhub.project.PrivacyNote.Font.FontSpalsh
+            <tkhub.project.PrivacyNote.ui.font.FontSpalsh
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
@@ -44,7 +44,7 @@
                 android:id="@+id/relativeLayoutnoteedit"
                 android:layout_alignParentRight="true">
 
-                <tkhub.project.PrivacyNote.Font.TextViewFontAwesome
+                <tkhub.project.PrivacyNote.ui.font.TextViewFontAwesome
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/icon_edit"
@@ -80,7 +80,7 @@
                 android:id="@+id/relativeLayout_dailog_username"
                 android:layout_alignParentLeft="true">
 
-                <tkhub.project.PrivacyNote.Font.FontSpalsh
+                <tkhub.project.PrivacyNote.ui.font.FontSpalsh
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceSmall"
@@ -101,7 +101,7 @@
                 android:id="@+id/relativeLayout_dailog_password"
                 android:layout_alignParentLeft="true">
 
-                <tkhub.project.PrivacyNote.Font.FontSpalsh
+                <tkhub.project.PrivacyNote.ui.font.FontSpalsh
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceSmall"
@@ -122,7 +122,7 @@
                 android:id="@+id/relativeLayout_dailog_other"
                 android:layout_alignParentLeft="true">
 
-                <tkhub.project.PrivacyNote.Font.FontSpalsh
+                <tkhub.project.PrivacyNote.ui.font.FontSpalsh
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceSmall"

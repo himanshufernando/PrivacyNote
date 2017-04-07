@@ -1,4 +1,4 @@
-package tkhub.project.PrivacyNote.Layout;
+package tkhub.project.PrivacyNote.ui.actitvity;
 
 import android.app.Activity;
 import android.app.ActivityOptions;
@@ -6,9 +6,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -21,15 +19,15 @@ import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
-import tkhub.project.PrivacyNote.DB.AppuserDB;
-import tkhub.project.PrivacyNote.DB.SecurityDB;
 import tkhub.project.PrivacyNote.R;
+import tkhub.project.PrivacyNote.data.database.AppuserDB;
+import tkhub.project.PrivacyNote.data.database.SecurityDB;
 
 /**
  * Created by Himanshu on 2/13/2017.
  */
 
-public class SecurityQuestion extends Activity {
+public class SecurityQuestionActivity extends Activity {
 
     MaterialSpinner spinnerColor, spinnerSport, spinnerYear;
     List<String> yearList;
@@ -98,13 +96,13 @@ public class SecurityQuestion extends Activity {
             public void onClick(View v) {
                 city = edittextCity.getText().toString();
                 if (color.equals("")) {
-                    Toast.makeText(SecurityQuestion.this, "Please select the color", Toast.LENGTH_LONG).show();
+                    Toast.makeText(SecurityQuestionActivity.this, "Please select the color", Toast.LENGTH_LONG).show();
                 } else if (sport.equals("")) {
-                    Toast.makeText(SecurityQuestion.this, "Please select the sport", Toast.LENGTH_LONG).show();
+                    Toast.makeText(SecurityQuestionActivity.this, "Please select the sport", Toast.LENGTH_LONG).show();
                 } else if (year.equals("")) {
-                    Toast.makeText(SecurityQuestion.this, "Please select the born year", Toast.LENGTH_LONG).show();
+                    Toast.makeText(SecurityQuestionActivity.this, "Please select the born year", Toast.LENGTH_LONG).show();
                 } else if (city.equals("") || city.isEmpty()) {
-                    Toast.makeText(SecurityQuestion.this, "Please mention the born city", Toast.LENGTH_LONG).show();
+                    Toast.makeText(SecurityQuestionActivity.this, "Please mention the born city", Toast.LENGTH_LONG).show();
                 } else {
                     if (parentLayout == 1) {
                         final Long tableSize = mRealm.where(SecurityDB.class).count();
@@ -120,10 +118,10 @@ public class SecurityQuestion extends Activity {
                                 securityDB.setCity(city);
                                 securityDB.setAllowe(1);
 
-                                Toast.makeText(SecurityQuestion.this, "Security Question added successfully", Toast.LENGTH_LONG).show();
+                                Toast.makeText(SecurityQuestionActivity.this, "Security Question added successfully", Toast.LENGTH_LONG).show();
 
-                                Intent intent = new Intent(SecurityQuestion.this, Home.class);
-                                Bundle bndlanimation = ActivityOptions.makeCustomAnimation(SecurityQuestion.this, R.anim.animation, R.anim.animation2).toBundle();
+                                Intent intent = new Intent(SecurityQuestionActivity.this, HomeActivity.class);
+                                Bundle bndlanimation = ActivityOptions.makeCustomAnimation(SecurityQuestionActivity.this, R.anim.animation, R.anim.animation2).toBundle();
                                 finish();
                                 startActivity(intent, bndlanimation);
                             }
@@ -163,7 +161,7 @@ public class SecurityQuestion extends Activity {
                                            }
                                        }
                                    }
-                                    new android.support.v7.app.AlertDialog.Builder(SecurityQuestion.this)
+                                    new android.support.v7.app.AlertDialog.Builder(SecurityQuestionActivity.this)
                                             .setTitle("Security Question")
                                             .setMessage(message+" is wrong, Please try again")
                                             .setPositiveButton("OK",new DialogInterface.OnClickListener() {
@@ -177,9 +175,9 @@ public class SecurityQuestion extends Activity {
                                 } else {
                                     final RealmResults<AppuserDB> results = realm.where(AppuserDB.class).findAll();
                                     results.deleteAllFromRealm();
-                                    Intent intent = new Intent(SecurityQuestion.this, Password.class);
+                                    Intent intent = new Intent(SecurityQuestionActivity.this, PasswordActivity.class);
                                     intent.putExtra("resetype",1);
-                                    Bundle bndlanimation = ActivityOptions.makeCustomAnimation(SecurityQuestion.this, R.anim.animation, R.anim.animation2).toBundle();
+                                    Bundle bndlanimation = ActivityOptions.makeCustomAnimation(SecurityQuestionActivity.this, R.anim.animation, R.anim.animation2).toBundle();
                                     finish();
                                     startActivity(intent, bndlanimation);
                                 }
@@ -212,7 +210,7 @@ public class SecurityQuestion extends Activity {
     public void onBackPressed() {
 
         if(parentLayout == 1){
-            AlertDialog.Builder alertDialog = new AlertDialog.Builder(SecurityQuestion.this);
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(SecurityQuestionActivity.this);
             alertDialog.setTitle("Exit");
             alertDialog.setMessage("Are you sure you want Exit ? if you exit you nedd to set password again");
             alertDialog.setIcon(R.drawable.fingerprint);
@@ -237,8 +235,8 @@ public class SecurityQuestion extends Activity {
             });
             alertDialog.show();
         }else {
-            Intent intent = new Intent(SecurityQuestion.this, Home.class);
-            Bundle bndlanimation = ActivityOptions.makeCustomAnimation(SecurityQuestion.this, R.anim.animation, R.anim.animation2).toBundle();
+            Intent intent = new Intent(SecurityQuestionActivity.this, HomeActivity.class);
+            Bundle bndlanimation = ActivityOptions.makeCustomAnimation(SecurityQuestionActivity.this, R.anim.animation, R.anim.animation2).toBundle();
             finish();
             startActivity(intent, bndlanimation);
         }

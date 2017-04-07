@@ -1,4 +1,4 @@
-package tkhub.project.PrivacyNote.Font;
+package tkhub.project.PrivacyNote.ui.font;
 
 import android.content.Context;
 import android.graphics.Typeface;

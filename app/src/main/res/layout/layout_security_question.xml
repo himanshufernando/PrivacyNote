@@ -15,7 +15,7 @@
         android:id="@+id/relativeLayout2"
         android:layout_alignParentLeft="true">
 
-        <tkhub.project.PrivacyNote.Font.FontSpalsh
+        <tkhub.project.PrivacyNote.ui.font.FontSpalsh
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
@@ -56,7 +56,7 @@
             android:background="@drawable/shadow_borders"
             android:layout_margin="10dp">
 
-            <tkhub.project.PrivacyNote.Font.FontSpalsh
+            <tkhub.project.PrivacyNote.ui.font.FontSpalsh
                 android:text="Favorite Color ?"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -92,7 +92,7 @@
                 android:layout_width="match_parent"
                 android:layout_marginRight="10dp" />
 
-            <tkhub.project.PrivacyNote.Font.FontSpalsh
+            <tkhub.project.PrivacyNote.ui.font.FontSpalsh
                 android:text="Favorite Sport ?"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -119,7 +119,7 @@
                 android:layout_marginRight="10dp" />
 
 
-            <tkhub.project.PrivacyNote.Font.FontSpalsh
+            <tkhub.project.PrivacyNote.ui.font.FontSpalsh
                 android:text="Born Year ?"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -145,7 +145,7 @@
                 android:layout_width="match_parent"
                 android:layout_marginRight="10dp" />
 
-            <tkhub.project.PrivacyNote.Font.FontSpalsh
+            <tkhub.project.PrivacyNote.ui.font.FontSpalsh
                 android:text="In what city were you born?"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

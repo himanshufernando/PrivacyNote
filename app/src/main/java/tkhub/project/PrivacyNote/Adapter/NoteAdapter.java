@@ -12,9 +12,11 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Random;
 
-import tkhub.project.PrivacyNote.Font.TextViewFontAwesome;
-import tkhub.project.PrivacyNote.Layout.Home;
+
+
 import tkhub.project.PrivacyNote.R;
+import tkhub.project.PrivacyNote.ui.actitvity.HomeActivity;
+import tkhub.project.PrivacyNote.ui.font.TextViewFontAwesome;
 
 
 /**
@@ -52,14 +54,14 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.MyViewHolder> 
         holder.main.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((Home) mContext).lodeNote(item.get(position).id, item.get(position).title, item.get(position).userName, item.get(position).password, item.get(position).other);
+                ((HomeActivity) mContext).lodeNote(item.get(position).id, item.get(position).title, item.get(position).userName, item.get(position).password, item.get(position).other);
             }
         });
 
         holder.delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((Home) mContext).accesPermitonforDelete(item.get(position).id);
+                ((HomeActivity) mContext).accesPermitonforDelete(item.get(position).id);
 
             }
         });

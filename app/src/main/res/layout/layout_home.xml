@@ -3,7 +3,6 @@
     android:id="@+id/drawer_layout"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="tkhub.project.PrivacyNote.Layout.Home"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -23,7 +22,7 @@
             android:id="@+id/relativeLayout2"
             android:layout_alignParentLeft="true">
 
-            <tkhub.project.PrivacyNote.Font.FontSpalsh
+            <tkhub.project.PrivacyNote.ui.font.FontSpalsh
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceLarge"
@@ -44,7 +43,7 @@
                 android:layout_marginRight="10dp"
                 android:layout_alignParentLeft="true">
 
-                <tkhub.project.PrivacyNote.Font.TextViewFontAwesome
+                <tkhub.project.PrivacyNote.ui.font.TextViewFontAwesome
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/icon_titlebarMenu"
@@ -83,7 +82,7 @@
                     android:id="@+id/relativeLayout16"
                     android:layout_alignParentRight="true">
 
-                    <tkhub.project.PrivacyNote.Font.TextViewFontAwesome
+                    <tkhub.project.PrivacyNote.ui.font.TextViewFontAwesome
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/icon_close"
@@ -103,7 +102,7 @@
                 android:id="@+id/relativeLayoutserachbutton"
                 android:layout_alignParentRight="true">
 
-                <tkhub.project.PrivacyNote.Font.TextViewFontAwesome
+                <tkhub.project.PrivacyNote.ui.font.TextViewFontAwesome
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/icon_serach"

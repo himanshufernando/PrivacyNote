@@ -22,7 +22,7 @@
             android:id="@+id/relativeLayout4"
             android:layout_alignParentLeft="true">
 
-            <tkhub.project.PrivacyNote.Font.FontSpalsh
+            <tkhub.project.PrivacyNote.ui.font.FontSpalsh
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
@@ -44,7 +44,7 @@
                 android:id="@+id/relativeLayouteditsave"
                 android:layout_alignParentRight="true">
 
-                <tkhub.project.PrivacyNote.Font.TextViewFontAwesome
+                <tkhub.project.PrivacyNote.ui.font.TextViewFontAwesome
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/icon_save"

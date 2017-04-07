@@ -16,18 +16,18 @@
         android:largeHeap="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Layout.Showcast">
+        <activity android:name=".ui.actitvity.ShowcastActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Layout.Login"/>
-        <activity android:name=".Layout.Password"/>
-        <activity android:name=".Layout.Home"/>
-        <activity android:name=".Layout.About"/>
-        <activity android:name=".Layout.SecurityQuestion"  android:windowSoftInputMode="stateHidden" />
+        <activity android:name=".ui.actitvity.LoginActivity"/>
+        <activity android:name=".ui.actitvity.PasswordActivity"/>
+        <activity android:name=".ui.actitvity.HomeActivity"/>
+        <activity android:name=".ui.actitvity.AboutActivity"/>
+        <activity android:name=".ui.actitvity.SecurityQuestionActivity"  android:windowSoftInputMode="stateHidden" />
 
     </application>
 

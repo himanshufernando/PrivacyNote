@@ -1,4 +1,4 @@
-package tkhub.project.PrivacyNote.Layout;
+package tkhub.project.PrivacyNote.ui.actitvity;
 
 import android.Manifest;
 import android.app.Activity;
@@ -19,7 +19,6 @@ import android.hardware.fingerprint.FingerprintManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
 import android.os.Process;
 import android.os.Vibrator;
 import android.security.keystore.KeyGenParameterSpec;
@@ -80,19 +79,17 @@ import tkhub.project.PrivacyNote.Adapter.NavigationDrawer;
 import tkhub.project.PrivacyNote.Adapter.NavigationDrawerItem;
 import tkhub.project.PrivacyNote.Adapter.NoteAdapter;
 import tkhub.project.PrivacyNote.Adapter.NoteItem;
-import tkhub.project.PrivacyNote.DB.AppuserDB;
-import tkhub.project.PrivacyNote.DB.NoteDB;
-import tkhub.project.PrivacyNote.DB.ResetDB;
-import tkhub.project.PrivacyNote.Font.TextViewFontAwesome;
 import tkhub.project.PrivacyNote.R;
-import tkhub.project.PrivacyNote.Servies.FingerprintHandler;
 import tkhub.project.PrivacyNote.Servies.FingerprintHandler2;
 import tkhub.project.PrivacyNote.Servies.FingerprintHandler3;
+import tkhub.project.PrivacyNote.data.database.AppuserDB;
+import tkhub.project.PrivacyNote.data.database.NoteDB;
+import tkhub.project.PrivacyNote.ui.font.TextViewFontAwesome;
 
 /**
  * Created by Himanshu on 8/3/2016.
  */
-public class Home extends Activity implements Animation.AnimationListener {
+public class HomeActivity extends Activity implements Animation.AnimationListener {
 
 
     private static final int MY_PERMISSIONS_REQUEST_EXTERNAL_STORAGE_WRITE = 123;
@@ -235,14 +232,14 @@ public class Home extends Activity implements Animation.AnimationListener {
                 if (position == 2) {
 
                     if(isFingerprintEnable()){
-                        Intent i = new Intent(Home.this, About.class);
+                        Intent i = new Intent(HomeActivity.this, AboutActivity.class);
                         Bundle bndlanimation = ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.animation, R.anim.animation2).toBundle();
                         finish();
                         startActivity(i, bndlanimation);
                     }else {
-                        Intent intent = new Intent(Home.this, SecurityQuestion.class);
+                        Intent intent = new Intent(HomeActivity.this, SecurityQuestionActivity.class);
                         intent.putExtra("PerantLayout",2);
-                        Bundle bndlanimation = ActivityOptions.makeCustomAnimation(Home.this, R.anim.animation, R.anim.animation2).toBundle();
+                        Bundle bndlanimation = ActivityOptions.makeCustomAnimation(HomeActivity.this, R.anim.animation, R.anim.animation2).toBundle();
                         finish();
                         startActivity(intent, bndlanimation);
                     }
@@ -250,7 +247,7 @@ public class Home extends Activity implements Animation.AnimationListener {
 
                 }
                 if (position == 3) {
-                    Intent i = new Intent(Home.this, About.class);
+                    Intent i = new Intent(HomeActivity.this, AboutActivity.class);
                     Bundle bndlanimation = ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.animation, R.anim.animation2).toBundle();
                     finish();
                     startActivity(i, bndlanimation);
@@ -336,7 +333,7 @@ public class Home extends Activity implements Animation.AnimationListener {
                 other = (EditText) findViewById(R.id.editText_other);
 
                 if (title.getText().toString().equals("")) {
-                    Toast.makeText(Home.this, "Title is empty", Toast.LENGTH_LONG).show();
+                    Toast.makeText(HomeActivity.this, "Title is empty", Toast.LENGTH_LONG).show();
                 } else {
                     final Long tableSize = mRealm.where(NoteDB.class).count();
                     mRealm.executeTransaction(new Realm.Transaction() {
@@ -351,7 +348,7 @@ public class Home extends Activity implements Animation.AnimationListener {
                             note.setOther(other.getText().toString());
                             note.setAllowe(0);
 
-                            Toast.makeText(Home.this, "Title added successfully", Toast.LENGTH_LONG).show();
+                            Toast.makeText(HomeActivity.this, "Title added successfully", Toast.LENGTH_LONG).show();
 
                             title.setText("");
                             username.setText("");
@@ -425,7 +422,7 @@ public class Home extends Activity implements Animation.AnimationListener {
 
         titel.setText(noteTitle);
         user.setText("User Name : " + noteUserName);
-        pass.setText("Password : " + notePassword);
+        pass.setText("PasswordActivity : " + notePassword);
         other.setText("Other : " + noteOther);
 
         layoutuser.setOnClickListener(new View.OnClickListener() {
@@ -435,7 +432,7 @@ public class Home extends Activity implements Animation.AnimationListener {
                 ClipData clip = ClipData.newPlainText("Username", noteUserName);
                 clipboard.setPrimaryClip(clip);
 
-                Toast.makeText(Home.this, "Appuser Name Copied", Toast.LENGTH_LONG).show();
+                Toast.makeText(HomeActivity.this, "Appuser Name Copied", Toast.LENGTH_LONG).show();
             }
         });
 
@@ -443,10 +440,10 @@ public class Home extends Activity implements Animation.AnimationListener {
             @Override
             public void onClick(View v) {
                 ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-                ClipData clip = ClipData.newPlainText("Password", notePassword);
+                ClipData clip = ClipData.newPlainText("PasswordActivity", notePassword);
                 clipboard.setPrimaryClip(clip);
 
-                Toast.makeText(Home.this, "Password Copied", Toast.LENGTH_LONG).show();
+                Toast.makeText(HomeActivity.this, "PasswordActivity Copied", Toast.LENGTH_LONG).show();
             }
         });
 
@@ -457,7 +454,7 @@ public class Home extends Activity implements Animation.AnimationListener {
                 ClipData clip = ClipData.newPlainText("Other", noteOther);
                 clipboard.setPrimaryClip(clip);
 
-                Toast.makeText(Home.this, "Other details Copied", Toast.LENGTH_LONG).show();
+                Toast.makeText(HomeActivity.this, "Other details Copied", Toast.LENGTH_LONG).show();
             }
         });
 
@@ -465,7 +462,7 @@ public class Home extends Activity implements Animation.AnimationListener {
             @Override
             public void onClick(View v) {
                 dialogBox.dismiss();
-                dialogBoxedit = new Dialog(Home.this);
+                dialogBoxedit = new Dialog(HomeActivity.this);
                 dialogBoxedit.requestWindowFeature(Window.FEATURE_NO_TITLE);
                 dialogBoxedit.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 dialogBoxedit.setContentView(R.layout.dilaog_note_edit);
@@ -500,7 +497,7 @@ public class Home extends Activity implements Animation.AnimationListener {
                                 noteedit.setUserName(user.getText().toString());
                                 noteedit.setPassword(pass.getText().toString());
                                 noteedit.setOther(other.getText().toString());
-                                Toast.makeText(Home.this, "Save Successfully", Toast.LENGTH_LONG).show();
+                                Toast.makeText(HomeActivity.this, "Save Successfully", Toast.LENGTH_LONG).show();
 
                                 dialogBoxedit.dismiss();
 
@@ -576,7 +573,7 @@ public class Home extends Activity implements Animation.AnimationListener {
     }
 
     public void accesPermiton() {
-        showNoteDialog(Home.this);
+        showNoteDialog(HomeActivity.this);
 
     }
 
@@ -631,7 +628,7 @@ public class Home extends Activity implements Animation.AnimationListener {
 
     public void deleteNote() {
 
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(Home.this);
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(HomeActivity.this);
         alertDialog.setTitle("Delete");
         alertDialog.setMessage("Are you sure you want delete this ?");
         alertDialog.setIcon(R.drawable.fingerprint);
@@ -699,7 +696,7 @@ public class Home extends Activity implements Animation.AnimationListener {
             ArrayAdapter<String> titleAdapterList = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, titleList);
             autoText.setAdapter(titleAdapterList);
         } else {
-            AlertDialog.Builder alertDialog = new AlertDialog.Builder(Home.this);
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(HomeActivity.this);
             alertDialog.setTitle("Exit");
             alertDialog.setMessage("Are you sure you want Exit ?");
             alertDialog.setIcon(R.drawable.fingerprint);
@@ -943,8 +940,8 @@ public class Home extends Activity implements Animation.AnimationListener {
             @Override
             public void onClick(View v) {
 
-                Intent intent = new Intent(Home.this, Password.class);
-                Bundle bndlanimation = ActivityOptions.makeCustomAnimation(Home.this, R.anim.animation, R.anim.animation2).toBundle();
+                Intent intent = new Intent(HomeActivity.this, PasswordActivity.class);
+                Bundle bndlanimation = ActivityOptions.makeCustomAnimation(HomeActivity.this, R.anim.animation, R.anim.animation2).toBundle();
                 finish();
                 startActivity(intent, bndlanimation);
 
@@ -1026,7 +1023,7 @@ public class Home extends Activity implements Animation.AnimationListener {
                                 AppuserDB toEdit = mRealm.where(AppuserDB.class).equalTo("id", 1).findFirst();
                                 toEdit.setPassword(pass);
 
-                                Toast.makeText(Home.this, "Password reset successfully", Toast.LENGTH_LONG).show();
+                                Toast.makeText(HomeActivity.this, "PasswordActivity reset successfully", Toast.LENGTH_LONG).show();
                                 pass = "";
                                 confrimStatues = 1;
                                 passwordToBeconfirmd = "";
@@ -1034,7 +1031,7 @@ public class Home extends Activity implements Animation.AnimationListener {
 
                                 if (status == 1) {
                                     dialogBoxPassword.dismiss();
-                                    showNoteDialog(Home.this);
+                                    showNoteDialog(HomeActivity.this);
                                 } else if (status == 2) {
                                     dialogBoxPassword.dismiss();
                                     deleteNote();
@@ -1061,13 +1058,13 @@ public class Home extends Activity implements Animation.AnimationListener {
                 if (ap != 0) {
                     if (status == 1) {
                         dialogBoxPassword.dismiss();
-                        showNoteDialog(Home.this);
+                        showNoteDialog(HomeActivity.this);
                     } else if (status == 2) {
                         dialogBoxPassword.dismiss();
                         deleteNote();
                     }
                 } else {
-                    message.setText("Password wrong");
+                    message.setText("PasswordActivity wrong");
                     message.setTextColor(getResources().getColor(R.color.iconRed));
                     t1.setText(R.string.icon_circle);
                     t2.setText(R.string.icon_circle);
@@ -1084,7 +1081,7 @@ public class Home extends Activity implements Animation.AnimationListener {
 
     private String copyBundledRealmFile(String oldFilePath, String outFileName) {
         try {
-            File file = new File(Home.this.getFilesDir(), outFileName);
+            File file = new File(HomeActivity.this.getFilesDir(), outFileName);
 
             FileOutputStream outputStream = new FileOutputStream(file);
 
@@ -1197,7 +1194,7 @@ public class Home extends Activity implements Animation.AnimationListener {
             String filePath = data.getStringExtra(FilePickerActivity.RESULT_FILE_PATH);
            copyBundledRealmFile(filePath, IMPORT_REALM_FILE_NAME);
 
-            new AlertDialog.Builder(Home.this)
+            new AlertDialog.Builder(HomeActivity.this)
                     .setTitle("Restore Successfully")
                     .setMessage("Database restore successfully,please restart the app and reset your password")
                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -1216,7 +1213,7 @@ public class Home extends Activity implements Animation.AnimationListener {
     }
 
     private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
-        new AlertDialog.Builder(Home.this)
+        new AlertDialog.Builder(HomeActivity.this)
                 .setMessage(message)
                 .setPositiveButton("OK", okListener)
                 .setNegativeButton("Cancel", null)
@@ -1233,7 +1230,7 @@ public class Home extends Activity implements Animation.AnimationListener {
 
         String msg = "File exported to Path: " + EXPORT_REALM_PATH + "/" + EXPORT_REALM_FILE_NAME;
 
-        new AlertDialog.Builder(Home.this)
+        new AlertDialog.Builder(HomeActivity.this)
                 .setTitle("Backup Successful")
                 .setMessage(msg)
                 .setPositiveButton("Ok",new DialogInterface.OnClickListener() {
@@ -1249,7 +1246,7 @@ public class Home extends Activity implements Animation.AnimationListener {
 
     public void readeBackup(){
         new MaterialFilePicker()
-                .withActivity(Home.this)
+                .withActivity(HomeActivity.this)
                 .withRequestCode(1)
                 .withFilterDirectories(true) // Set directories filterable (false by default)
                 .withHiddenFiles(true) // Show hidden files and folders
@@ -1289,5 +1286,7 @@ public class Home extends Activity implements Animation.AnimationListener {
         }
         return result;
     }
+
+
 
 }

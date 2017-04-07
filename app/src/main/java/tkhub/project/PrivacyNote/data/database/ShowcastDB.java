@@ -1,7 +1,6 @@
-package tkhub.project.PrivacyNote.DB;
+package tkhub.project.PrivacyNote.data.database;
 
 import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
 
 /**
  * Created by Himanshu on 8/3/2016.
@@ -17,11 +16,9 @@ public class ShowcastDB extends RealmObject {
     public void setId(int id) {
         this.id = id;
     }
-
     public int getCount() {
         return count;
     }
-
     public void setCount(int count) {
         this.count = count;
     }

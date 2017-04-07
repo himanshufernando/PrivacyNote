@@ -4,15 +4,18 @@ import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.hardware.fingerprint.FingerprintManager;
+import android.os.Build;
 import android.os.CancellationSignal;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.widget.Toast;
 
-import tkhub.project.PrivacyNote.Layout.Home;
+import tkhub.project.PrivacyNote.ui.actitvity.HomeActivity;
 
 /**
  * Created by Himanshu on 8/3/2016.
  */
+@RequiresApi(api = Build.VERSION_CODES.M)
 public class FingerprintHandler3 extends FingerprintManager.AuthenticationCallback {
 
     private CancellationSignal cancellationSignal;
@@ -53,7 +56,7 @@ public class FingerprintHandler3 extends FingerprintManager.AuthenticationCallba
 
     @Override
     public void onAuthenticationSucceeded(FingerprintManager.AuthenticationResult result) {
-        ((Home) appContext).deleteNote();
+        ((HomeActivity) appContext).deleteNote();
 
     }
 }

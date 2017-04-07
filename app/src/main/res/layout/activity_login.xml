@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="tkhub.project.PrivacyNote.Layout.Login"
+    tools:context="tkhub.project.PrivacyNote.ui.actitvity.LoginActivity"
     android:background="#ffffff">
 
     <ImageView
@@ -13,9 +13,6 @@
         android:src="@drawable/fingerprint"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true" />
-
-
-
 
 
     <RelativeLayout
@@ -32,9 +29,12 @@
             android:id="@+id/relativeLayout6"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"></RelativeLayout>
+            android:layout_alignParentRight="true">
 
-        <tkhub.project.PrivacyNote.Font.FontSpalsh
+
+        </RelativeLayout>
+
+        <tkhub.project.PrivacyNote.ui.font.FontSpalsh
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
