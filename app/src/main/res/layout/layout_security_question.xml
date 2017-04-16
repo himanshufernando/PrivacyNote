@@ -81,16 +81,18 @@
                 android:layout_margin="20dp" />
 
             <com.jaredrummler.materialspinner.MaterialSpinner
-                app:ms_dropdown_height="wrap_content"
-                app:ms_text_color="@android:color/black"
                 android:id="@+id/spinner_color"
-                android:layout_below="@+id/textView86"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
                 android:layout_alignLeft="@+id/textView86"
                 android:layout_alignStart="@+id/textView86"
-                android:layout_height="50dp"
+                android:layout_below="@+id/textView86"
+                android:layout_marginRight="10dp"
+                android:text="Select Your Color"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                android:layout_width="match_parent"
-                android:layout_marginRight="10dp" />
+                android:textColor="@color/appBlack"
+                app:ms_dropdown_height="wrap_content"
+                app:ms_text_color="@android:color/black" />
 
             <tkhub.project.PrivacyNote.ui.font.FontSpalsh
                 android:text="Favorite Sport ?"

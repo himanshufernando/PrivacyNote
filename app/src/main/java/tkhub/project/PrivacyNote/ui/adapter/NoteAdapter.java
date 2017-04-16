@@ -1,4 +1,4 @@
-package tkhub.project.PrivacyNote.Adapter;
+package tkhub.project.PrivacyNote.ui.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -15,6 +15,7 @@ import java.util.Random;
 
 
 import tkhub.project.PrivacyNote.R;
+import tkhub.project.PrivacyNote.data.model.NoteItem;
 import tkhub.project.PrivacyNote.ui.actitvity.HomeActivity;
 import tkhub.project.PrivacyNote.ui.font.TextViewFontAwesome;
 

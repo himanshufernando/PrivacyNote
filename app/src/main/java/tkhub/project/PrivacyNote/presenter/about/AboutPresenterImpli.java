@@ -1,11 +1,9 @@
 package tkhub.project.PrivacyNote.presenter.about;
 
 import android.content.Context;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 
-import tkhub.project.PrivacyNote.model.AboutInteractor;
-import tkhub.project.PrivacyNote.model.AboutInteractorImpil;
+import tkhub.project.PrivacyNote.model.about.AboutInteractor;
+import tkhub.project.PrivacyNote.model.about.AboutInteractorImpil;
 import tkhub.project.PrivacyNote.ui.view.AboutView;
 
 /**

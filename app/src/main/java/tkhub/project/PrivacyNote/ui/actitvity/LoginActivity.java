@@ -42,6 +42,8 @@ import io.realm.Realm;
 import tkhub.project.PrivacyNote.R;
 import tkhub.project.PrivacyNote.Servies.FingerprintHandler;
 import tkhub.project.PrivacyNote.data.database.ShowcastDB;
+import tkhub.project.PrivacyNote.presenter.login.LoginPresenter;
+import tkhub.project.PrivacyNote.presenter.login.LoginPresenterImpli;
 
 /**
  * Created by Himanshu on 10/16/2016.
@@ -69,6 +71,10 @@ public class LoginActivity extends Activity {
 
     private FingerprintManager.CryptoObject mCryptoObject;
 
+
+
+    LoginPresenter loginPresenter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,59 +83,51 @@ public class LoginActivity extends Activity {
 
         Realm.init(this);
         mRealm = Realm.getDefaultInstance();
+        loginPresenter = new LoginPresenterImpli();
 
-       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             try {
                 keyguardManager = (KeyguardManager) getSystemService(KEYGUARD_SERVICE);
+
+
+
                 fingerprintManager = (FingerprintManager) getSystemService(FINGERPRINT_SERVICE);
-               if (!fingerprintManager.isHardwareDetected()) {
-                    Intent intent = new Intent(LoginActivity.this, PasswordActivity.class);
-                    Bundle bndlanimation = ActivityOptions.makeCustomAnimation(LoginActivity.this, R.anim.animation, R.anim.animation2).toBundle();
-                    finish();
-                    startActivity(intent, bndlanimation);
+                if (!fingerprintManager.isHardwareDetected()) {
+                    loadPasswordActivity();
                 }
-                 if (!keyguardManager.isKeyguardSecure()) {
+                if (!keyguardManager.isKeyguardSecure()) {
                     Toast.makeText(this, "Lock screen security not enabled in Settings", Toast.LENGTH_LONG).show();
                     return;
                 }
 
-                  if (ActivityCompat.checkSelfPermission(this, Manifest.permission.USE_FINGERPRINT) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.USE_FINGERPRINT) != PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(this, "Fingerprint authentication permission not enabled", Toast.LENGTH_LONG).show();
                     return;
                 }
-                 if (!fingerprintManager.hasEnrolledFingerprints()) {
+                if (!fingerprintManager.hasEnrolledFingerprints()) {
                     Toast.makeText(this, "Register at least one fingerprint in Settings", Toast.LENGTH_LONG).show();
                     return;
-                }else {
-                     Toast.makeText(this, "Use your Fingerprint to login", Toast.LENGTH_SHORT).show();
-                     final Long tableSize = mRealm.where(ShowcastDB.class).count();
+                } else {
+                    Toast.makeText(this, "Use your Fingerprint to login", Toast.LENGTH_SHORT).show();
+                    final Long tableSize = mRealm.where(ShowcastDB.class).count();
 
-                     if(tableSize==0){
-                         new android.support.v7.app.AlertDialog.Builder(LoginActivity.this)
-                                 .setMessage("Please use your Fingerprint to login")
-                                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                     @Override
-                                     public void onClick(DialogInterface dialog, int which) {
-                                         return;
-                                     }
-                                 })
-                                 .create()
-                                 .show();
-                     }else {
-                         System.out.println("sdssdsd");
-                     }
-
-
-                     mRealm.executeTransaction(new Realm.Transaction() {
-                         @Override
-                         public void execute(Realm realm) {
-                             ShowcastDB showcast = realm.createObject(ShowcastDB.class);
-                             showcast.setId(1);
-                             showcast.setCount(5);
-                         }
-                     });
+                    if (tableSize == 0) {
+                        new android.support.v7.app.AlertDialog.Builder(LoginActivity.this)
+                                .setMessage("Please use your Fingerprint to login")
+                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        return;
+                                    }
+                                })
+                                .create()
+                                .show();
+                    } else {
+                        System.out.println("sdssdsd");
+                    }
 
 
+                    updateshowcastDb();
                     generateKey();
 
                     if (cipherInit()) {
@@ -141,45 +139,37 @@ public class LoginActivity extends Activity {
                 }
 
 
-
-            }catch (NoClassDefFoundError noclass){
+            } catch (NoClassDefFoundError noclass) {
                 Toast.makeText(this, "No Fingerprint Feature", Toast.LENGTH_LONG).show();
-                layoutPass=(RelativeLayout)findViewById(R.id.relativeLayout6);
+                layoutPass = (RelativeLayout) findViewById(R.id.relativeLayout6);
                 layoutPass.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(LoginActivity.this, PasswordActivity.class);
-                        Bundle bndlanimation = ActivityOptions.makeCustomAnimation(LoginActivity.this, R.anim.animation, R.anim.animation2).toBundle();
-                        finish();
-                        startActivity(intent, bndlanimation);
+                        loadPasswordActivity();
                     }
                 });
 
 
             }
-        }else {
-            new Handler().postDelayed(new Runnable() {
-                public void run() {
-
-                     Intent intent = new Intent(LoginActivity.this, PasswordActivity.class);
-                      Bundle bndlanimation = ActivityOptions.makeCustomAnimation(LoginActivity.this, R.anim.animation, R.anim.animation2).toBundle();
-                      finish();
-                     startActivity(intent, bndlanimation);
-                }
-            }, 3000);
+        } else {
+            loadPasswordActivity();
         }
 
-        layoutPass=(RelativeLayout)findViewById(R.id.relativeLayout6);
+        layoutPass = (RelativeLayout) findViewById(R.id.relativeLayout6);
         layoutPass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(LoginActivity.this, PasswordActivity.class);
-                Bundle bndlanimation = ActivityOptions.makeCustomAnimation(LoginActivity.this, R.anim.animation, R.anim.animation2).toBundle();
-                finish();
-                startActivity(intent, bndlanimation);
+                loadPasswordActivity();
             }
         });
     }
+    public void loadPasswordActivity(){
+        Intent intent = new Intent(LoginActivity.this, PasswordActivity.class);
+        Bundle bndlanimation = ActivityOptions.makeCustomAnimation(LoginActivity.this, R.anim.animation, R.anim.animation2).toBundle();
+        finish();
+        startActivity(intent, bndlanimation);
+    }
+
 
     protected void generateKey() {
 
@@ -209,13 +199,12 @@ public class LoginActivity extends Activity {
             } catch (NoSuchAlgorithmException | InvalidAlgorithmParameterException | CertificateException | IOException e) {
                 throw new RuntimeException(e);
             }
-        }else {
+        } else {
 
         }
 
 
     }
-
 
 
     public boolean cipherInit() {
@@ -243,10 +232,10 @@ public class LoginActivity extends Activity {
                 }
                 mCipher.init(Cipher.ENCRYPT_MODE, key);
                 return true;
-            } catch ( CertificateException | IOException | NoSuchAlgorithmException | InvalidKeyException e) {
+            } catch (CertificateException | IOException | NoSuchAlgorithmException | InvalidKeyException e) {
                 throw new RuntimeException("Failed to init Cipher", e);
             }
-        }else {
+        } else {
             return false;
         }
 
@@ -256,7 +245,7 @@ public class LoginActivity extends Activity {
     public void sucsessAccess() {
 
         final Dialog dialogBox;
-        dialogBox =new Dialog(LoginActivity.this);
+        dialogBox = new Dialog(LoginActivity.this);
         dialogBox.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialogBox.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialogBox.setContentView(R.layout.dilaog_progress);
@@ -275,8 +264,13 @@ public class LoginActivity extends Activity {
         }, 3000);
 
 
-
     }
+
+
+    public void updateshowcastDb(){
+        loginPresenter.OnShowcastDatabaseUpdate(mRealm);
+    }
+
 
 
 

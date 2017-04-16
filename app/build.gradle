@@ -5,7 +5,7 @@ android {
     compileSdkVersion 24
     buildToolsVersion '25.0.0'
     defaultConfig {
-        applicationId "tkhub.project.PrivacyNote"
+        applicationId "tkhub.project.PrivacyNoteApp"
         minSdkVersion 16
         targetSdkVersion 24
         versionCode 2
@@ -30,7 +30,7 @@ buildscript {
 
     }
     dependencies {
-        classpath "io.realm:realm-gradle-plugin:3.0.0"
+        classpath "io.realm:realm-gradle-plugin:3.1.2"
     }
 }
 repositories {
@@ -64,4 +64,5 @@ dependencies {
     testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
     compile 'com.jakewharton:butterknife:8.5.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
+
 }

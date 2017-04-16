@@ -1,6 +1,7 @@
 package tkhub.project.PrivacyNote.ui.actitvity;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ActivityOptions;
 import android.app.Dialog;
@@ -10,7 +11,6 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -72,24 +72,28 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.inject.Inject;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import io.realm.Case;
 import io.realm.Realm;
-import io.realm.RealmConfiguration;
 import tkhub.project.PrivacyNote.Adapter.NavigationDrawer;
 import tkhub.project.PrivacyNote.Adapter.NavigationDrawerItem;
-import tkhub.project.PrivacyNote.Adapter.NoteAdapter;
-import tkhub.project.PrivacyNote.Adapter.NoteItem;
+import tkhub.project.PrivacyNote.presenter.home.HomePresenter;
+import tkhub.project.PrivacyNote.presenter.home.HomePresenterImpli;
+import tkhub.project.PrivacyNote.ui.adapter.NoteAdapter;
+import tkhub.project.PrivacyNote.data.model.NoteItem;
 import tkhub.project.PrivacyNote.R;
 import tkhub.project.PrivacyNote.Servies.FingerprintHandler2;
 import tkhub.project.PrivacyNote.Servies.FingerprintHandler3;
 import tkhub.project.PrivacyNote.data.database.AppuserDB;
 import tkhub.project.PrivacyNote.data.database.NoteDB;
 import tkhub.project.PrivacyNote.ui.font.TextViewFontAwesome;
+import tkhub.project.PrivacyNote.ui.view.HomeView;
 
 /**
  * Created by Himanshu on 8/3/2016.
  */
-public class HomeActivity extends Activity implements Animation.AnimationListener {
+public class HomeActivity extends Activity implements Animation.AnimationListener,HomeView {
 
 
     private static final int MY_PERMISSIONS_REQUEST_EXTERNAL_STORAGE_WRITE = 123;
@@ -97,15 +101,28 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
 
     Dialog dialogBox, dialogBoxedit;
     private Realm mRealm;
-    private RealmConfiguration realmConfig;
-    RecyclerView eventList;
-    DrawerLayout dLayout;
-    ListView navigationList;
+
+    @BindView(R.id.list_news) RecyclerView eventList;
+    @BindView(R.id.drawer_layout) DrawerLayout dLayout;
+    @BindView(R.id.listView_navigation) ListView navigationList;
+
+    @BindView(R.id.relativeLayoutnoteadd) RelativeLayout layoutAdd;
+    @BindView(R.id.relativeLayoutlistnote) RelativeLayout layoutView;
+    @BindView(R.id.relativeLayoutserachbutton) RelativeLayout searchBtn;
+    @BindView(R.id.relativeLayoutSearch) RelativeLayout layoutSearch;
+    @BindView(R.id.relativeLayout16) RelativeLayout serachClose;
+    @BindView(R.id.relativeLayout3) RelativeLayout layoutAbout;
+
+
+    HomePresenter homePresenter;
+
+
+
 
     ArrayList<NoteItem> noteItems = new ArrayList<NoteItem>();
     NoteAdapter notAdapter;
 
-    RelativeLayout layoutAdd, layoutView, searchBtn, layoutSearch, serachClose, layoutEdit, layoutAbout;
+    RelativeLayout layoutEdit;
 
     AutoCompleteTextView autoText;
 
@@ -122,7 +139,7 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
     public String notePassword;
     public String noteOther;
     SearchView searchView;
-     String finalPass ;
+    String finalPass;
     String pass;
 
     int confrimStatues = 0;
@@ -154,12 +171,11 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
 
     private FingerprintManager.CryptoObject mCryptoObject;
 
-    private File EXPORT_REALM_PATH ;
+    private File EXPORT_REALM_PATH;
     private String EXPORT_REALM_FILE_NAME = "privacynotebackup.realm";
     private String IMPORT_REALM_FILE_NAME = "default.realm";
 
     private ArrayList<String> docPaths = new ArrayList<>();
-
 
 
     @Override
@@ -167,31 +183,27 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_home);
 
-
+        ButterKnife.bind(this);
         Realm.init(this);
         mRealm = Realm.getDefaultInstance();
 
-        eventList = (RecyclerView) findViewById(R.id.list_news);
+
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(this, 1);
         eventList.setLayoutManager(mLayoutManager);
         eventList.setItemAnimator(new DefaultItemAnimator());
-        layoutAdd = (RelativeLayout) findViewById(R.id.relativeLayoutnoteadd);
-        layoutView = (RelativeLayout) findViewById(R.id.relativeLayoutlistnote);
-        searchBtn = (RelativeLayout) findViewById(R.id.relativeLayoutserachbutton);
-        layoutSearch = (RelativeLayout) findViewById(R.id.relativeLayoutSearch);
-        serachClose = (RelativeLayout) findViewById(R.id.relativeLayout16);
-        layoutAbout = (RelativeLayout) findViewById(R.id.relativeLayout3);
-        dLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+
+
+
+
 
         tf = Typeface.createFromAsset(getAssets(), "Font/Comfortaa-Light.ttf");
 
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             EXPORT_REALM_PATH = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
-        }else {
+        } else {
             EXPORT_REALM_PATH = new File(Environment.getExternalStorageDirectory() + "/Documents");
         }
-
 
 
         mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
@@ -201,17 +213,20 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
 
         mNavItems.add(new NavigationDrawerItem("Home", R.string.icon_navigation_home));
         mNavItems.add(new NavigationDrawerItem("Backup", R.string.icon_navigation_backup));
-        if(isFingerprintEnable()){
-        }else {
+        if (isFingerprintEnable()) {
+        } else {
             mNavItems.add(new NavigationDrawerItem("Password Reset", R.string.icon_navigation_reset));
         }
         mNavItems.add(new NavigationDrawerItem("About", R.string.icon_navigation_about));
 
 
         NavigationDrawer adapter = new NavigationDrawer(this, mNavItems);
-        navigationList = (ListView) findViewById(R.id.listView_navigation);
         navigationList.setAdapter(adapter);
-        notAdapter = new NoteAdapter(this, noteItems);
+
+
+
+
+
         titleList = new ArrayList<String>();
 
         navigationList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -223,7 +238,7 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
                     if (!checkPermission()) {
                         requestPermission();
                     } else {
-                       writeBackup();
+                        writeBackup();
 
                     }
 
@@ -231,14 +246,14 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
                 }
                 if (position == 2) {
 
-                    if(isFingerprintEnable()){
+                    if (isFingerprintEnable()) {
                         Intent i = new Intent(HomeActivity.this, AboutActivity.class);
                         Bundle bndlanimation = ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.animation, R.anim.animation2).toBundle();
                         finish();
                         startActivity(i, bndlanimation);
-                    }else {
+                    } else {
                         Intent intent = new Intent(HomeActivity.this, SecurityQuestionActivity.class);
-                        intent.putExtra("PerantLayout",2);
+                        intent.putExtra("PerantLayout", 2);
                         Bundle bndlanimation = ActivityOptions.makeCustomAnimation(HomeActivity.this, R.anim.animation, R.anim.animation2).toBundle();
                         finish();
                         startActivity(intent, bndlanimation);
@@ -257,8 +272,8 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
             }
         });
 
-        setAllNote();
 
+        onActivityLoard();
 
 
         layoutAbout.setOnClickListener(new View.OnClickListener() {
@@ -283,7 +298,8 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
             public void onClick(View v) {
                 layoutSearch.setVisibility(View.INVISIBLE);
                 searchBtn.setVisibility(View.VISIBLE);
-                setAllNote();
+                //setAllNote();
+                homePresenter.setAllNote(mRealm,noteItems);
             }
         });
 
@@ -384,11 +400,13 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
 
     }
 
-    public void setAutotext(List<String> tiList){
+    public void setAutotext(List<String> tiList) {
         ArrayAdapter<String> titleAdapterList = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, tiList);
         autoText.setAdapter(titleAdapterList);
     }
-    public void setAllNote(){
+
+/*
+    public void setAllNote() {
 
         noteItems.clear();
         for (NoteDB no : mRealm.where(NoteDB.class).equalTo("allowe", 0).findAll()) {
@@ -400,6 +418,7 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
         eventList.setAdapter(notAdapter);
 
     }
+*/
 
     public void showNoteDialog(Context con) {
 
@@ -409,6 +428,8 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
         dialogBox.setContentView(R.layout.dilaog_note);
         dialogBox.setCancelable(true);
         dialogBox.show();
+
+
 
         TextView titel = (TextView) dialogBox.findViewById(R.id.textView_dailog_title);
         TextView user = (TextView) dialogBox.findViewById(R.id.textView_dailog_user);
@@ -440,10 +461,10 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
             @Override
             public void onClick(View v) {
                 ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-                ClipData clip = ClipData.newPlainText("PasswordActivity", notePassword);
+                ClipData clip = ClipData.newPlainText("Password", notePassword);
                 clipboard.setPrimaryClip(clip);
 
-                Toast.makeText(HomeActivity.this, "PasswordActivity Copied", Toast.LENGTH_LONG).show();
+                Toast.makeText(HomeActivity.this, "Password Copied", Toast.LENGTH_LONG).show();
             }
         });
 
@@ -577,6 +598,7 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
 
     }
 
+    @TargetApi(Build.VERSION_CODES.M)
     public void accesPermitonforDelete(final int id) {
 
         Toast.makeText(this, "Fingerprint Access Needed", Toast.LENGTH_LONG).show();
@@ -1091,7 +1113,6 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
             int bytesRead;
 
 
-
             while ((bytesRead = inputStream.read(buf)) > 0) {
                 outputStream.write(buf, 0, bytesRead);
             }
@@ -1183,16 +1204,9 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
         super.onActivityResult(requestCode, resultCode, data);
 
 
-
-        SharedPreferences sharedPref = getApplicationContext().getSharedPreferences("MyPref", 0);
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putInt("01",255);
-        editor.commit();
-
-
         if (requestCode == 1 && resultCode == RESULT_OK) {
             String filePath = data.getStringExtra(FilePickerActivity.RESULT_FILE_PATH);
-           copyBundledRealmFile(filePath, IMPORT_REALM_FILE_NAME);
+            copyBundledRealmFile(filePath, IMPORT_REALM_FILE_NAME);
 
             new AlertDialog.Builder(HomeActivity.this)
                     .setTitle("Restore Successfully")
@@ -1205,7 +1219,7 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
                     })
                     .create()
                     .show();
-        }else {
+        } else {
             dLayout.closeDrawer(Gravity.LEFT);
         }
 
@@ -1221,7 +1235,7 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
                 .show();
     }
 
-    public void writeBackup(){
+    public void writeBackup() {
         File exportRealmFile;
         EXPORT_REALM_PATH.mkdirs();
         exportRealmFile = new File(EXPORT_REALM_PATH, EXPORT_REALM_FILE_NAME);
@@ -1233,8 +1247,8 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
         new AlertDialog.Builder(HomeActivity.this)
                 .setTitle("Backup Successful")
                 .setMessage(msg)
-                .setPositiveButton("Ok",new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog,int id) {
+                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
                         dLayout.closeDrawer(Gravity.LEFT);
                     }
                 })
@@ -1244,7 +1258,7 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
         mRealm.close();
     }
 
-    public void readeBackup(){
+    public void readeBackup() {
         new MaterialFilePicker()
                 .withActivity(HomeActivity.this)
                 .withRequestCode(1)
@@ -1253,7 +1267,7 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
                 .start();
     }
 
-    public boolean isFingerprintEnable(){
+    public boolean isFingerprintEnable() {
 
         boolean result = false;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -1262,31 +1276,36 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
                 fingerprintManager = (FingerprintManager) getSystemService(FINGERPRINT_SERVICE);
                 if (!fingerprintManager.isHardwareDetected()) {
                     result = false;
-                }
-                else if (!keyguardManager.isKeyguardSecure()) {
+                } else if (!keyguardManager.isKeyguardSecure()) {
                     result = false;
-                }
-
-                else  if (ActivityCompat.checkSelfPermission(this, Manifest.permission.USE_FINGERPRINT) != PackageManager.PERMISSION_GRANTED) {
+                } else if (ActivityCompat.checkSelfPermission(this, Manifest.permission.USE_FINGERPRINT) != PackageManager.PERMISSION_GRANTED) {
                     result = false;
-                }
-                else if (!fingerprintManager.hasEnrolledFingerprints()) {
+                } else if (!fingerprintManager.hasEnrolledFingerprints()) {
                     result = false;
-                }else {
+                } else {
                     result = true;
                 }
 
 
-
-            }catch (NoClassDefFoundError noclass){
+            } catch (NoClassDefFoundError noclass) {
                 result = false;
             }
-        }else {
+        } else {
             result = false;
         }
         return result;
     }
 
 
+    private void onActivityLoard(){
+        notAdapter = new NoteAdapter(this,noteItems);
+        homePresenter = new HomePresenterImpli(this);
+        homePresenter.setAllNote(mRealm,noteItems);
+    }
 
+    @Override
+    public void onFinishedSetAllNote() {
+
+        eventList.setAdapter(notAdapter);
+    }
 }

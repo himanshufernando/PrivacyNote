@@ -8,7 +8,8 @@ import com.squareup.leakcanary.LeakCanary;
  * Created by Himanshu on 3/29/2017.
  */
 
-public class PrivacyNote extends Application {
+public class PrivacyNoteApp extends Application {
+
 
     @Override public void onCreate() {
         super.onCreate();
@@ -18,6 +19,6 @@ public class PrivacyNote extends Application {
             return;
         }
         LeakCanary.install(this);
-        // Normal app init code...
+
     }
 }

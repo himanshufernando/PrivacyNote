@@ -13,6 +13,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Process;
@@ -35,31 +36,70 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import io.realm.Case;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import tkhub.project.PrivacyNote.R;
 import tkhub.project.PrivacyNote.data.database.AppuserDB;
 import tkhub.project.PrivacyNote.data.database.ResetDB;
+import tkhub.project.PrivacyNote.data.database.ShowcastDB;
+import tkhub.project.PrivacyNote.presenter.password.PasswordPresenter;
+import tkhub.project.PrivacyNote.presenter.password.PasswordPresenterImpli;
 import tkhub.project.PrivacyNote.ui.font.TextViewFontAwesome;
+import tkhub.project.PrivacyNote.ui.view.PasswordView;
 
 /**
  * Created by Himanshu on 8/4/2016.
  */
-public class PasswordActivity extends Activity implements Animation.AnimationListener {
+public class PasswordActivity extends Activity implements Animation.AnimationListener, PasswordView {
 
-    Button one, two, three, four, five, six, seven, eight, nine, zero, reset, back,restore;
-    private Vibrator mVibrator;
-
-    TextViewFontAwesome t1, t2, t3, t4;
+    @BindView(R.id.btn1)
+    Button one;
+    @BindView(R.id.btn2)
+    Button two;
+    @BindView(R.id.btn3)
+    Button three;
+    @BindView(R.id.btn4)
+    Button four;
+    @BindView(R.id.btn5)
+    Button five;
+    @BindView(R.id.btn6)
+    Button six;
+    @BindView(R.id.btn7)
+    Button seven;
+    @BindView(R.id.btn8)
+    Button eight;
+    @BindView(R.id.btn9)
+    Button nine;
+    @BindView(R.id.btn0)
+    Button zero;
+    @BindView(R.id.btnreset)
+    Button reset;
+    @BindView(R.id.btnBack)
+    Button back;
+    @BindView(R.id.btnrestore)
+    Button restore;
+    @BindView(R.id.textView_icon_1)
+    TextViewFontAwesome t1;
+    @BindView(R.id.textView_icon_2)
+    TextViewFontAwesome t2;
+    @BindView(R.id.textView_icon_3)
+    TextViewFontAwesome t3;
+    @BindView(R.id.textView_icon_4)
+    TextViewFontAwesome t4;
+    @BindView(R.id.textViewMessage)
     TextView message;
 
+
+    private Vibrator mVibrator;
     String passwordToBeconfirmd = "";
     String password = "";
 
-    RelativeLayout layoutvibrate;
-
     private Realm mRealm;
-    private RealmConfiguration realmConfig;
+
 
     int passwordStatues = 0;
     int confrimStatues = 0;
@@ -70,96 +110,24 @@ public class PasswordActivity extends Activity implements Animation.AnimationLis
 
     private static final int MY_PERMISSIONS_REQUEST_EXTERNAL_STORAGE_READ = 124;
 
+    PasswordPresenter passwordPresenter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_password);
+        ButterKnife.bind(this);
 
-
-        Typeface tf = Typeface.createFromAsset(getAssets(), "Font/Comfortaa-Light.ttf");
+        setTypeface();
         mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-
-        resetype =getIntent().getIntExtra("resetype",0);
-
-        t1 = (TextViewFontAwesome) findViewById(R.id.textView_icon_1);
-        t2 = (TextViewFontAwesome) findViewById(R.id.textView_icon_2);
-        t3 = (TextViewFontAwesome) findViewById(R.id.textView_icon_3);
-        t4 = (TextViewFontAwesome) findViewById(R.id.textView_icon_4);
-
-        message = (TextView) findViewById(R.id.textViewMessage);
+        resetype = getIntent().getIntExtra("resetype", 0);
 
         Realm.init(this);
         mRealm = Realm.getDefaultInstance();
 
+        passwordPresenter = new PasswordPresenterImpli(this,PasswordActivity.this,this);
 
-
-
-        final Long tableSize = mRealm.where(AppuserDB.class).count();
-        final Long resetTableSize = mRealm.where(ResetDB.class).count();
-
-        SharedPreferences  pref = getApplicationContext().getSharedPreferences("MyPref", 0);
-        System.out.println("ssdsdsdssd :"+ pref.getInt("01", 2));
-
-        if (tableSize == 0) {
-            message.setText("Please set the PasswordActivity");
-            message.setTextColor(getResources().getColor(R.color.iconRed));
-            passwordStatues = 0;
-        } else {
-            passwordStatues = 1;
-        }
-
-
-        one = (Button) findViewById(R.id.btn1);
-        one.setTypeface(tf);
-
-        two = (Button) findViewById(R.id.btn2);
-        two.setTypeface(tf);
-
-        ////
-        three = (Button) findViewById(R.id.btn3);
-        three.setTypeface(tf);
-
-        four = (Button) findViewById(R.id.btn4);
-        four.setTypeface(tf);
-
-        five = (Button) findViewById(R.id.btn5);
-        five.setTypeface(tf);
-
-        six = (Button) findViewById(R.id.btn6);
-        six.setTypeface(tf);
-
-        seven = (Button) findViewById(R.id.btn7);
-        seven.setTypeface(tf);
-
-        eight = (Button) findViewById(R.id.btn8);
-        eight.setTypeface(tf);
-
-        nine = (Button) findViewById(R.id.btn9);
-        nine.setTypeface(tf);
-
-        zero = (Button) findViewById(R.id.btn0);
-        zero.setTypeface(tf);
-
-        reset = (Button) findViewById(R.id.btnreset);
-        reset.setTypeface(tf);
-
-        back = (Button) findViewById(R.id.btnBack);
-        back.setTypeface(tf);
-
-
-        restore = (Button)findViewById(R.id.btnrestore);
-        restore.setTypeface(tf);
-        restore.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!checkPermissionRead()) {
-                    requestPermissionRead();
-                } else {
-                    readeBackup();
-                }
-
-            }
-        });
+        setPasswordStatues();
 
 
         one.setOnClickListener(new View.OnClickListener() {
@@ -258,7 +226,7 @@ public class PasswordActivity extends Activity implements Animation.AnimationLis
                 mVibrator.vibrate(100);
                 if (passwordStatues == 0) {
                     message.setTextColor(getResources().getColor(R.color.iconRed));
-                    message.setText("You don't have a PasswordActivity to reset,Please set initial PasswordActivity");
+                    message.setText("You don't have a Password to reset,Please set initial Password");
 
                     t1.setText(R.string.icon_circle);
                     t2.setText(R.string.icon_circle);
@@ -269,7 +237,7 @@ public class PasswordActivity extends Activity implements Animation.AnimationLis
                 } else {
 
                     Intent intent = new Intent(PasswordActivity.this, SecurityQuestionActivity.class);
-                    intent.putExtra("PerantLayout",2);
+                    intent.putExtra("PerantLayout", 2);
                     Bundle bndlanimation = ActivityOptions.makeCustomAnimation(PasswordActivity.this, R.anim.animation, R.anim.animation2).toBundle();
                     finish();
                     startActivity(intent, bndlanimation);
@@ -309,6 +277,34 @@ public class PasswordActivity extends Activity implements Animation.AnimationLis
 
             }
         });
+    }
+
+    private void setTypeface() {
+        Typeface tf = Typeface.createFromAsset(getAssets(), "Font/Comfortaa-Light.ttf");
+        one.setTypeface(tf);
+        two.setTypeface(tf);
+        three.setTypeface(tf);
+        four.setTypeface(tf);
+        five.setTypeface(tf);
+        six.setTypeface(tf);
+        seven.setTypeface(tf);
+        eight.setTypeface(tf);
+        nine.setTypeface(tf);
+        zero.setTypeface(tf);
+        reset.setTypeface(tf);
+        back.setTypeface(tf);
+        restore.setTypeface(tf);
+    }
+
+    private void setPasswordStatues() {
+        final Long tableSize = mRealm.where(AppuserDB.class).count();
+        if (tableSize == 0) {
+            message.setText("Please set the Password");
+            message.setTextColor(getResources().getColor(R.color.iconRed));
+            passwordStatues = 0;
+        } else {
+            passwordStatues = 1;
+        }
     }
 
 
@@ -360,30 +356,34 @@ public class PasswordActivity extends Activity implements Animation.AnimationLis
                                 Object primaryKeyValue = tableSize + 1;
                                 AppuserDB userAdd = realm.createObject(AppuserDB.class, primaryKeyValue);
                                 userAdd.setPassword(password);
-                                Toast.makeText(PasswordActivity.this, "PasswordActivity added successfully", Toast.LENGTH_LONG).show();
+                                Toast.makeText(PasswordActivity.this, "Password added successfully", Toast.LENGTH_LONG).show();
                                 password = "";
                                 confrimStatues = 1;
                                 passwordToBeconfirmd = "";
                                 message.setText("");
                                 Intent intent;
 
-                                if(resetype==1){
-                                     intent = new Intent(PasswordActivity.this, HomeActivity.class);
-                                }else {
-                                     intent = new Intent(PasswordActivity.this, SecurityQuestionActivity.class);
-                                     intent.putExtra("PerantLayout",1);
+                                if (resetype == 1) {
+                                    intent = new Intent(PasswordActivity.this, HomeActivity.class);
+                                } else {
+                                    intent = new Intent(PasswordActivity.this, SecurityQuestionActivity.class);
+                                    intent.putExtra("PerantLayout", 1);
                                 }
+
+
+                                ShowcastDB showcast = realm.createObject(ShowcastDB.class);
+                                showcast.setId(1);
+                                showcast.setCount(5);
+
 
                                 Bundle bndlanimation = ActivityOptions.makeCustomAnimation(PasswordActivity.this, R.anim.animation, R.anim.animation2).toBundle();
                                 finish();
                                 startActivity(intent, bndlanimation);
 
-
-                              //  sucsessAccess();
                             }
                         });
                     } else {
-                        message.setText("PasswordActivity does not match the confirm password");
+                        message.setText("Password does not match the confirm password");
                         message.setTextColor(getResources().getColor(R.color.iconRed));
                         mVibrator.vibrate(300);
                         password = "";
@@ -409,7 +409,7 @@ public class PasswordActivity extends Activity implements Animation.AnimationLis
                             public void execute(Realm realm) {
                                 AppuserDB toEdit = mRealm.where(AppuserDB.class).equalTo("id", 1).findFirst();
                                 toEdit.setPassword(password);
-                                Toast.makeText(PasswordActivity.this, "PasswordActivity reset successfully", Toast.LENGTH_LONG).show();
+                                Toast.makeText(PasswordActivity.this, "Password reset successfully", Toast.LENGTH_LONG).show();
                                 password = "";
                                 confrimStatues = 1;
                                 passwordToBeconfirmd = "";
@@ -420,7 +420,7 @@ public class PasswordActivity extends Activity implements Animation.AnimationLis
                     }
 
                 } else {
-                    message.setText("PasswordActivity does not match the confirm password");
+                    message.setText("Password does not match the confirm password");
                     message.setTextColor(getResources().getColor(R.color.iconRed));
                     t1.setText(R.string.icon_circle);
                     t2.setText(R.string.icon_circle);
@@ -435,7 +435,7 @@ public class PasswordActivity extends Activity implements Animation.AnimationLis
                 if (ap != 0) {
                     sucsessAccess();
                 } else {
-                    message.setText("PasswordActivity wrong");
+                    message.setText("Password wrong");
                     message.setTextColor(getResources().getColor(R.color.iconRed));
                     t1.setText(R.string.icon_circle);
                     t2.setText(R.string.icon_circle);
@@ -462,11 +462,6 @@ public class PasswordActivity extends Activity implements Animation.AnimationLis
 
     @Override
     public void onAnimationRepeat(Animation animation) {
-
-    }
-
-    public void vibrateLavel(int level) {
-        mVibrator.vibrate(level);
     }
 
 
@@ -495,102 +490,94 @@ public class PasswordActivity extends Activity implements Animation.AnimationLis
 
 
     }
-    private boolean checkPermissionRead() {
-        int result = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE);
-        return result == PackageManager.PERMISSION_GRANTED;
+
+    @OnClick(R.id.btnrestore)
+    public void onClick(View v) {
+        passwordPresenter.readBackup();
+
     }
-    private void requestPermissionRead() {
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_EXTERNAL_STORAGE_READ);
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        if (requestCode == MY_PERMISSIONS_REQUEST_EXTERNAL_STORAGE_READ) {
+            if (grantResults.length > 0) {
+                boolean locationAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                if (locationAccepted) {
+                    passwordPresenter.readBackup();
+                } else {
+                    Toast.makeText(this, "Permission Denied", Toast.LENGTH_LONG).show();
+                }
+            }
+        } else {
+
+        }
+
     }
 
 
     @Override
     public void onBackPressed() {
 
-            AlertDialog.Builder alertDialog = new AlertDialog.Builder(PasswordActivity.this);
-            alertDialog.setTitle("Exit");
-            alertDialog.setMessage("Are you sure you want Exit ?");
-            alertDialog.setIcon(R.drawable.fingerprint);
-            alertDialog.setPositiveButton("YES", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    finish();
-                    System.exit(0);
-                }
-            });
-            alertDialog.setNegativeButton("NO", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
-                }
-            });
-            alertDialog.show();
-
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(PasswordActivity.this);
+        alertDialog.setTitle("Exit");
+        alertDialog.setMessage("Are you sure you want Exit ?");
+        alertDialog.setIcon(R.drawable.fingerprint);
+        alertDialog.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                finish();
+                System.exit(0);
+            }
+        });
+        alertDialog.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        alertDialog.show();
 
 
     }
-    public void readeBackup(){
-        new MaterialFilePicker()
-                .withActivity(PasswordActivity.this)
-                .withRequestCode(1)
-                .withFilterDirectories(true) // Set directories filterable (false by default)
-                .withHiddenFiles(true) // Show hidden files and folders
-                .start();
-    }
+
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-
-
-        SharedPreferences sharedPref = getApplicationContext().getSharedPreferences("MyPref", 0);
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putInt("01",255);
-        editor.commit();
-
-
         if (requestCode == 1 && resultCode == RESULT_OK) {
             String filePath = data.getStringExtra(FilePickerActivity.RESULT_FILE_PATH);
-            copyBundledRealmFile(filePath, IMPORT_REALM_FILE_NAME);
-
-            new android.support.v7.app.AlertDialog.Builder(PasswordActivity.this)
-                    .setTitle("Restore Successfully")
-                    .setMessage("Database restore successfully,please restart the app and reset your password")
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            Process.killProcess(Process.myPid());
-                        }
-                    })
-                    .create()
-                    .show();
-        }else {
+            passwordPresenter.writeBackup(filePath, IMPORT_REALM_FILE_NAME, PasswordActivity.this);
+        } else {
 
         }
 
-
     }
-    private String copyBundledRealmFile(String oldFilePath, String outFileName) {
-        try {
-            File file = new File(PasswordActivity.this.getFilesDir(), outFileName);
-
-            FileOutputStream outputStream = new FileOutputStream(file);
-
-            FileInputStream inputStream = new FileInputStream(new File(oldFilePath));
-
-            byte[] buf = new byte[1024];
-            int bytesRead;
-
-
-
-            while ((bytesRead = inputStream.read(buf)) > 0) {
-                outputStream.write(buf, 0, bytesRead);
-            }
-            outputStream.close();
-            return file.getAbsolutePath();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
+    @Override
+    public void onFinishWriteBackup() {
+        new android.support.v7.app.AlertDialog.Builder(PasswordActivity.this)
+                .setTitle("Restore Successfully")
+                .setMessage("Database restore successfully,please restart the app and reset your password")
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Process.killProcess(Process.myPid());
+                    }
+                })
+                .create()
+                .show();
     }
 
-
+    @Override
+    public void onErrorWriteBackup(String error) {
+        new android.support.v7.app.AlertDialog.Builder(PasswordActivity.this)
+                .setTitle("Restore Unsuccessfully")
+                .setMessage(error)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        return;
+                    }
+                })
+                .create()
+                .show();
+    }
 }
