@@ -9,8 +9,6 @@ import android.content.pm.PackageManager;
  */
 
 public class AboutInteractorImpil implements AboutInteractor {
-
-
     @Override
     public void getCurrentVersion(OnLoginFinishedListener listener, Context con) {
         String version = null;

@@ -29,8 +29,7 @@ public class HomeInteractorImpil implements HomeInteractor {
     public void setAllNote(Realm realm,ArrayList<NoteItem> noteItems, OnFinishedListener onFinishedListener) {
         noteItems.clear();
         for (NoteDB no : realm.where(NoteDB.class).equalTo("allowe", 0).findAll()) {
-            noteItems.add(new NoteItem(no.getId(), no.getTitle(), no.getUserName(),
-                    no.getPassword(), no.getOther()));
+            noteItems.add(new NoteItem(no.getId(), no.getTitle(), no.getUserName(), no.getPassword(), no.getOther()));
             System.out.println("sssssss :"+no.getTitle());
 
         }

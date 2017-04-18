@@ -242,7 +242,6 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
 
                     }
 
-
                 }
                 if (position == 2) {
 
