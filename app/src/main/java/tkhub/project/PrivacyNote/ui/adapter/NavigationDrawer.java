@@ -1,4 +1,4 @@
-package tkhub.project.PrivacyNote.Adapter;
+package tkhub.project.PrivacyNote.ui.adapter;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import tkhub.project.PrivacyNote.data.model.NavigationDrawerItem;
 import tkhub.project.PrivacyNote.ui.font.TextViewFontAwesome;
 import tkhub.project.PrivacyNote.R;
 

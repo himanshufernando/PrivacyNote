@@ -1,4 +1,4 @@
-package tkhub.project.PrivacyNote.Adapter;
+package tkhub.project.PrivacyNote.data.model;
 
 /**
  * Created by Himanshu on 7/22/2016.
