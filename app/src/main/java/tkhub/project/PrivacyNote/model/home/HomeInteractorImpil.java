@@ -15,7 +15,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import io.realm.Case;
 import io.realm.Realm;
+import tkhub.project.PrivacyNote.Adapter.NavigationDrawerItem;
 import tkhub.project.PrivacyNote.data.database.NoteDB;
 import tkhub.project.PrivacyNote.data.model.NoteItem;
 import tkhub.project.PrivacyNote.model.password.PasswordInteractor;
@@ -26,14 +28,23 @@ import tkhub.project.PrivacyNote.model.password.PasswordInteractor;
 
 public class HomeInteractorImpil implements HomeInteractor {
     @Override
-    public void setAllNote(Realm realm,ArrayList<NoteItem> noteItems, OnFinishedListener onFinishedListener) {
+    public void setAllNote(Realm realm,ArrayList<NoteItem> noteItems,String keyword ,OnFinishedListener onFinishedListener) {
         noteItems.clear();
-        for (NoteDB no : realm.where(NoteDB.class).equalTo("allowe", 0).findAll()) {
-            noteItems.add(new NoteItem(no.getId(), no.getTitle(), no.getUserName(), no.getPassword(), no.getOther()));
-            System.out.println("sssssss :"+no.getTitle());
-
+        if(keyword.equals("")){
+            for (NoteDB no : realm.where(NoteDB.class).equalTo("allowe", 0).findAll()) {
+                noteItems.add(new NoteItem(no.getId(), no.getTitle(), no.getUserName(), no.getPassword(), no.getOther()));
+            }
+        }else {
+            for (NoteDB no : realm.where(NoteDB.class).beginsWith("title", keyword, Case.INSENSITIVE).equalTo("allowe", 0).findAll()) {
+                noteItems.add(new NoteItem(no.getId(), no.getTitle(), no.getUserName(), no.getPassword(), no.getOther()));
+            }
         }
         onFinishedListener.onsetAllNote();
+    }
+
+    @Override
+    public void setAllNavigationItem(Realm realm, ArrayList<NavigationDrawerItem> navigationDrawerItems, OnFinishedListener onFinishedListener) {
+
     }
 
 

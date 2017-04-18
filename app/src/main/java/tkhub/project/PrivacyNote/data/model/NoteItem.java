@@ -21,6 +21,8 @@ public class NoteItem {
 
     }
 
+
+
     public int getId() {
         return id;
     }

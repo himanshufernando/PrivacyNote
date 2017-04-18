@@ -74,6 +74,7 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnTextChanged;
 import io.realm.Case;
 import io.realm.Realm;
 import tkhub.project.PrivacyNote.Adapter.NavigationDrawer;
@@ -113,6 +114,8 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
     @BindView(R.id.relativeLayout16) RelativeLayout serachClose;
     @BindView(R.id.relativeLayout3) RelativeLayout layoutAbout;
 
+    @BindView(R.id.autoCompleteTextView) AutoCompleteTextView autoText;
+
 
     HomePresenter homePresenter;
 
@@ -124,7 +127,7 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
 
     RelativeLayout layoutEdit;
 
-    AutoCompleteTextView autoText;
+
 
     EditText other, title, username, password;
 
@@ -195,7 +198,6 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
 
 
 
-
         tf = Typeface.createFromAsset(getAssets(), "Font/Comfortaa-Light.ttf");
 
 
@@ -207,7 +209,7 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
 
 
         mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-        autoText = (AutoCompleteTextView) findViewById(R.id.autoCompleteTextView);
+
 
         ArrayList<NavigationDrawerItem> mNavItems = new ArrayList<NavigationDrawerItem>();
 
@@ -222,8 +224,6 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
 
         NavigationDrawer adapter = new NavigationDrawer(this, mNavItems);
         navigationList.setAdapter(adapter);
-
-
 
 
 
@@ -297,8 +297,7 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
             public void onClick(View v) {
                 layoutSearch.setVisibility(View.INVISIBLE);
                 searchBtn.setVisibility(View.VISIBLE);
-                //setAllNote();
-                homePresenter.setAllNote(mRealm,noteItems);
+                homePresenter.setAllNote(mRealm,noteItems,"");
             }
         });
 
@@ -312,30 +311,6 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
             }
         });
 
-        autoText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-                noteItems.clear();
-                for (NoteDB no : mRealm.where(NoteDB.class).beginsWith("title", s.toString(), Case.INSENSITIVE).equalTo("allowe", 0).findAll()) {
-                    noteItems.add(new NoteItem(no.getId(), no.getTitle(), no.getUserName(),
-                            no.getPassword(), no.getOther()));
-
-                }
-
-                eventList.setAdapter(notAdapter);
-            }
-        });
 
         FloatingActionButton save = (FloatingActionButton) findViewById(R.id.fab2);
         save.setOnClickListener(new View.OnClickListener() {
@@ -374,13 +349,8 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
                             layoutAdd.setVisibility(View.INVISIBLE);
                             backStatus = false;
                             noteItems.clear();
-                            for (NoteDB no : mRealm.where(NoteDB.class).equalTo("allowe", 0).findAll()) {
-                                noteItems.add(new NoteItem(no.getId(), no.getTitle(), no.getUserName(),
-                                        no.getPassword(), no.getOther()));
+                            homePresenter.setAllNote(mRealm,noteItems,"");
 
-                            }
-
-                            eventList.setAdapter(notAdapter);
                             titleList.clear();
                             for (NoteDB no : mRealm.where(NoteDB.class).findAll()) {
                                 titleList.add(no.getTitle());
@@ -399,25 +369,17 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
 
     }
 
+    @OnTextChanged(value = R.id.autoCompleteTextView, callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
+    void afterEmailInput(Editable editable) {
+        homePresenter.setAllNote(mRealm,noteItems,editable.toString());
+    }
+
     public void setAutotext(List<String> tiList) {
         ArrayAdapter<String> titleAdapterList = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, tiList);
         autoText.setAdapter(titleAdapterList);
     }
 
-/*
-    public void setAllNote() {
 
-        noteItems.clear();
-        for (NoteDB no : mRealm.where(NoteDB.class).equalTo("allowe", 0).findAll()) {
-            noteItems.add(new NoteItem(no.getId(), no.getTitle(), no.getUserName(),
-                    no.getPassword(), no.getOther()));
-
-        }
-
-        eventList.setAdapter(notAdapter);
-
-    }
-*/
 
     public void showNoteDialog(Context con) {
 
@@ -522,10 +484,10 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
                                 dialogBoxedit.dismiss();
 
                                 noteItems.clear();
-                                for (NoteDB no : mRealm.where(NoteDB.class).equalTo("allowe", 0).findAll()) {
+                              /*  for (NoteDB no : mRealm.where(NoteDB.class).equalTo("allowe", 0).findAll()) {
                                     noteItems.add(new NoteItem(no.getId(), no.getTitle(), no.getUserName(),
                                             no.getPassword(), no.getOther()));
-                                }
+                                }*/
                                 eventList.setAdapter(notAdapter);
 
                             }
@@ -661,10 +623,10 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
                 edit.setAllowe(12);
                 mRealm.commitTransaction();
                 noteItems.clear();
-                for (NoteDB no : mRealm.where(NoteDB.class).equalTo("allowe", 0).findAll()) {
+               /* for (NoteDB no : mRealm.where(NoteDB.class).equalTo("allowe", 0).findAll()) {
                     noteItems.add(new NoteItem(no.getId(), no.getTitle(), no.getUserName(),
                             no.getPassword(), no.getOther()));
-                }
+                }*/
                 eventList.setAdapter(notAdapter);
             }
         });
@@ -701,12 +663,12 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
             layoutAdd.setVisibility(View.INVISIBLE);
             backStatus = false;
             noteItems.clear();
-            for (NoteDB no : mRealm.where(NoteDB.class).equalTo("allowe", 0).findAll()) {
+            /*for (NoteDB no : mRealm.where(NoteDB.class).equalTo("allowe", 0).findAll()) {
                 noteItems.add(new NoteItem(no.getId(), no.getTitle(), no.getUserName(),
                         no.getPassword(), no.getOther()));
 
             }
-
+*/
             eventList.setAdapter(notAdapter);
             titleList.clear();
             for (NoteDB no : mRealm.where(NoteDB.class).findAll()) {
@@ -1299,12 +1261,11 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
     private void onActivityLoard(){
         notAdapter = new NoteAdapter(this,noteItems);
         homePresenter = new HomePresenterImpli(this);
-        homePresenter.setAllNote(mRealm,noteItems);
+        homePresenter.setAllNote(mRealm,noteItems,"");
     }
 
     @Override
     public void onFinishedSetAllNote() {
-
         eventList.setAdapter(notAdapter);
     }
 }

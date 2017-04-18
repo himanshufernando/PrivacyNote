@@ -12,7 +12,5 @@ import tkhub.project.PrivacyNote.data.model.NoteItem;
  */
 
 public interface HomePresenter {
-
-    void setAllNote(Realm realm,ArrayList<NoteItem> noteItems);
-
+    void setAllNote(Realm realm,ArrayList<NoteItem> noteItems,String keyword);
 }

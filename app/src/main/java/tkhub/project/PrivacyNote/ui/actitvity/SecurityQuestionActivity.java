@@ -102,8 +102,6 @@ public class SecurityQuestionActivity extends Activity implements SecurityQuesVi
         }
     }
 
-
-
     private int getLayoutStatus(){
        return getIntent().getIntExtra("PerantLayout", 0);
     }

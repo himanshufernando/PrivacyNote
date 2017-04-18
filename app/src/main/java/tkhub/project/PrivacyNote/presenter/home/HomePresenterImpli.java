@@ -30,13 +30,13 @@ public class HomePresenterImpli implements HomePresenter,HomeInteractor.OnFinish
     }
 
     @Override
-    public void setAllNote(Realm realm,ArrayList<NoteItem> noteItems) {
-        homeInteractor.setAllNote(realm,noteItems,this);
+    public void setAllNote(Realm realm,ArrayList<NoteItem> noteItems,String keyword) {
+        homeInteractor.setAllNote(realm,noteItems,keyword,this);
     }
 
     @Override
     public void onsetAllNote() {
-
+        homeView.onFinishedSetAllNote();
     }
 /*
     PasswordInteractor passwordInteractor;
