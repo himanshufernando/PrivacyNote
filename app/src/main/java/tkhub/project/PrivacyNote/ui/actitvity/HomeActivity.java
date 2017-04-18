@@ -33,7 +33,6 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
@@ -75,10 +74,9 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnTextChanged;
-import io.realm.Case;
 import io.realm.Realm;
-import tkhub.project.PrivacyNote.Adapter.NavigationDrawer;
-import tkhub.project.PrivacyNote.Adapter.NavigationDrawerItem;
+import tkhub.project.PrivacyNote.ui.adapter.NavigationDrawer;
+import tkhub.project.PrivacyNote.data.model.NavigationDrawerItem;
 import tkhub.project.PrivacyNote.presenter.home.HomePresenter;
 import tkhub.project.PrivacyNote.presenter.home.HomePresenterImpli;
 import tkhub.project.PrivacyNote.ui.adapter.NoteAdapter;
@@ -94,7 +92,7 @@ import tkhub.project.PrivacyNote.ui.view.HomeView;
 /**
  * Created by Himanshu on 8/3/2016.
  */
-public class HomeActivity extends Activity implements Animation.AnimationListener,HomeView {
+public class HomeActivity extends Activity implements Animation.AnimationListener, HomeView {
 
 
     private static final int MY_PERMISSIONS_REQUEST_EXTERNAL_STORAGE_WRITE = 123;
@@ -103,30 +101,40 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
     Dialog dialogBox, dialogBoxedit;
     private Realm mRealm;
 
-    @BindView(R.id.list_news) RecyclerView eventList;
-    @BindView(R.id.drawer_layout) DrawerLayout dLayout;
-    @BindView(R.id.listView_navigation) ListView navigationList;
+    @BindView(R.id.list_news)
+    RecyclerView eventList;
+    @BindView(R.id.drawer_layout)
+    DrawerLayout dLayout;
+    @BindView(R.id.listView_navigation)
+    ListView navigationList;
 
-    @BindView(R.id.relativeLayoutnoteadd) RelativeLayout layoutAdd;
-    @BindView(R.id.relativeLayoutlistnote) RelativeLayout layoutView;
-    @BindView(R.id.relativeLayoutserachbutton) RelativeLayout searchBtn;
-    @BindView(R.id.relativeLayoutSearch) RelativeLayout layoutSearch;
-    @BindView(R.id.relativeLayout16) RelativeLayout serachClose;
-    @BindView(R.id.relativeLayout3) RelativeLayout layoutAbout;
+    @BindView(R.id.relativeLayoutnoteadd)
+    RelativeLayout layoutAdd;
+    @BindView(R.id.relativeLayoutlistnote)
+    RelativeLayout layoutView;
+    @BindView(R.id.relativeLayoutserachbutton)
+    RelativeLayout searchBtn;
+    @BindView(R.id.relativeLayoutSearch)
+    RelativeLayout layoutSearch;
+    @BindView(R.id.relativeLayout16)
+    RelativeLayout serachClose;
+    @BindView(R.id.relativeLayout3)
+    RelativeLayout layoutAbout;
 
-    @BindView(R.id.autoCompleteTextView) AutoCompleteTextView autoText;
+    @BindView(R.id.autoCompleteTextView)
+    AutoCompleteTextView autoText;
 
 
     HomePresenter homePresenter;
 
 
-
-
-    ArrayList<NoteItem> noteItems = new ArrayList<NoteItem>();
+    NavigationDrawer navigationDrawerAdapter;
     NoteAdapter notAdapter;
 
-    RelativeLayout layoutEdit;
+    ArrayList<NoteItem> noteItems = new ArrayList<NoteItem>();
+    ArrayList<NavigationDrawerItem> navigationDrawerItems = new ArrayList<NavigationDrawerItem>();
 
+    RelativeLayout layoutEdit;
 
 
     EditText other, title, username, password;
@@ -196,8 +204,6 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
         eventList.setItemAnimator(new DefaultItemAnimator());
 
 
-
-
         tf = Typeface.createFromAsset(getAssets(), "Font/Comfortaa-Light.ttf");
 
 
@@ -211,20 +217,7 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
         mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
 
-        ArrayList<NavigationDrawerItem> mNavItems = new ArrayList<NavigationDrawerItem>();
-
-        mNavItems.add(new NavigationDrawerItem("Home", R.string.icon_navigation_home));
-        mNavItems.add(new NavigationDrawerItem("Backup", R.string.icon_navigation_backup));
-        if (isFingerprintEnable()) {
-        } else {
-            mNavItems.add(new NavigationDrawerItem("Password Reset", R.string.icon_navigation_reset));
-        }
-        mNavItems.add(new NavigationDrawerItem("About", R.string.icon_navigation_about));
-
-
-        NavigationDrawer adapter = new NavigationDrawer(this, mNavItems);
-        navigationList.setAdapter(adapter);
-
+        onActivityLoard();
 
 
         titleList = new ArrayList<String>();
@@ -272,9 +265,6 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
         });
 
 
-        onActivityLoard();
-
-
         layoutAbout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -297,7 +287,7 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
             public void onClick(View v) {
                 layoutSearch.setVisibility(View.INVISIBLE);
                 searchBtn.setVisibility(View.VISIBLE);
-                homePresenter.setAllNote(mRealm,noteItems,"");
+                homePresenter.setAllNote(mRealm, noteItems, "");
             }
         });
 
@@ -348,8 +338,10 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
                             layoutView.setVisibility(View.VISIBLE);
                             layoutAdd.setVisibility(View.INVISIBLE);
                             backStatus = false;
-                            noteItems.clear();
-                            homePresenter.setAllNote(mRealm,noteItems,"");
+
+
+
+                            homePresenter.setAllNote(mRealm, noteItems, "");
 
                             titleList.clear();
                             for (NoteDB no : mRealm.where(NoteDB.class).findAll()) {
@@ -371,14 +363,13 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
 
     @OnTextChanged(value = R.id.autoCompleteTextView, callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
     void afterEmailInput(Editable editable) {
-        homePresenter.setAllNote(mRealm,noteItems,editable.toString());
+        homePresenter.setAllNote(mRealm, noteItems, editable.toString());
     }
 
     public void setAutotext(List<String> tiList) {
         ArrayAdapter<String> titleAdapterList = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, tiList);
         autoText.setAdapter(titleAdapterList);
     }
-
 
 
     public void showNoteDialog(Context con) {
@@ -389,7 +380,6 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
         dialogBox.setContentView(R.layout.dilaog_note);
         dialogBox.setCancelable(true);
         dialogBox.show();
-
 
 
         TextView titel = (TextView) dialogBox.findViewById(R.id.textView_dailog_title);
@@ -1258,14 +1248,25 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
     }
 
 
-    private void onActivityLoard(){
-        notAdapter = new NoteAdapter(this,noteItems);
+    private void onActivityLoard() {
+        notAdapter = new NoteAdapter(this, noteItems);
+        navigationDrawerAdapter = new NavigationDrawer(this, navigationDrawerItems);
+
+
         homePresenter = new HomePresenterImpli(this);
-        homePresenter.setAllNote(mRealm,noteItems,"");
+
+
+        homePresenter.setAllNote(mRealm, noteItems, "");
+        homePresenter.setAllNavagationItem(mRealm,navigationDrawerItems);
     }
 
     @Override
     public void onFinishedSetAllNote() {
         eventList.setAdapter(notAdapter);
+    }
+
+    @Override
+    public void onFinishedNavigationItems() {
+        navigationList.setAdapter(navigationDrawerAdapter);
     }
 }

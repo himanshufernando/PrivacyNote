@@ -1,12 +1,9 @@
 package tkhub.project.PrivacyNote.model.home;
 
-import android.app.Activity;
-import android.content.Context;
-
 import java.util.ArrayList;
 
 import io.realm.Realm;
-import tkhub.project.PrivacyNote.Adapter.NavigationDrawerItem;
+import tkhub.project.PrivacyNote.data.model.NavigationDrawerItem;
 import tkhub.project.PrivacyNote.data.model.NoteItem;
 
 /**

@@ -1,26 +1,14 @@
 package tkhub.project.PrivacyNote.model.home;
 
-import android.Manifest;
-import android.app.Activity;
-import android.content.Context;
-import android.content.pm.PackageManager;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-
-import com.nbsp.materialfilepicker.MaterialFilePicker;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 
 import io.realm.Case;
 import io.realm.Realm;
-import tkhub.project.PrivacyNote.Adapter.NavigationDrawerItem;
+import tkhub.project.PrivacyNote.R;
+import tkhub.project.PrivacyNote.data.database.SecurityDB;
+import tkhub.project.PrivacyNote.data.model.NavigationDrawerItem;
 import tkhub.project.PrivacyNote.data.database.NoteDB;
 import tkhub.project.PrivacyNote.data.model.NoteItem;
-import tkhub.project.PrivacyNote.model.password.PasswordInteractor;
 
 /**
  * Created by Himanshu on 4/5/2017.
@@ -44,7 +32,17 @@ public class HomeInteractorImpil implements HomeInteractor {
 
     @Override
     public void setAllNavigationItem(Realm realm, ArrayList<NavigationDrawerItem> navigationDrawerItems, OnFinishedListener onFinishedListener) {
-
+        if(navigationDrawerItems.isEmpty()){
+            navigationDrawerItems.add(new NavigationDrawerItem("Home", R.string.icon_navigation_home));
+            navigationDrawerItems.add(new NavigationDrawerItem("Backup", R.string.icon_navigation_backup));
+            if (realm.where(SecurityDB.class).count()>0) {
+                navigationDrawerItems.add(new NavigationDrawerItem("Password Reset", R.string.icon_navigation_reset));
+            } else {
+            }
+            navigationDrawerItems.add(new NavigationDrawerItem("About", R.string.icon_navigation_about));
+        }else {
+        }
+        onFinishedListener.onsetAllNavigationItems();
     }
 
 

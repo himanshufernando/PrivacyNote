@@ -59,8 +59,8 @@ public class NavigationDrawer extends BaseAdapter {
         TextView titleView = (TextView) view.findViewById(R.id.textViewNavigationName);
         TextViewFontAwesome iconView = (TextViewFontAwesome) view.findViewById(R.id.imageViewnavigationIcon);
 
-        titleView.setText(mNavItems.get(position).mTitle);
-        iconView.setText(mNavItems.get(position).mImage);
+        titleView.setText(mNavItems.get(position).getmTitle());
+        iconView.setText(mNavItems.get(position).getmImage());
 
         highlightItem(position,convertView);
         return view;

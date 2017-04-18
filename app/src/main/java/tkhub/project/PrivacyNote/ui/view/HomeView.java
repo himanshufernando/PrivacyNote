@@ -10,4 +10,5 @@ import tkhub.project.PrivacyNote.data.model.NoteItem;
 
 public interface HomeView {
     void onFinishedSetAllNote();
+    void onFinishedNavigationItems();
 }

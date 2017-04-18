@@ -5,6 +5,7 @@ import android.app.Activity;
 import java.util.ArrayList;
 
 import io.realm.Realm;
+import tkhub.project.PrivacyNote.data.model.NavigationDrawerItem;
 import tkhub.project.PrivacyNote.data.model.NoteItem;
 
 /**
@@ -13,4 +14,5 @@ import tkhub.project.PrivacyNote.data.model.NoteItem;
 
 public interface HomePresenter {
     void setAllNote(Realm realm,ArrayList<NoteItem> noteItems,String keyword);
+    void setAllNavagationItem(Realm realm, ArrayList<NavigationDrawerItem> navigationDrawerItems);
 }

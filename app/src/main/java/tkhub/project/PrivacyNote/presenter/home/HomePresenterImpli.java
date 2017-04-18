@@ -6,6 +6,7 @@ import android.content.Context;
 import java.util.ArrayList;
 
 import io.realm.Realm;
+import tkhub.project.PrivacyNote.data.model.NavigationDrawerItem;
 import tkhub.project.PrivacyNote.data.model.NoteItem;
 import tkhub.project.PrivacyNote.model.home.HomeInteractor;
 import tkhub.project.PrivacyNote.model.home.HomeInteractorImpil;
@@ -35,39 +36,18 @@ public class HomePresenterImpli implements HomePresenter,HomeInteractor.OnFinish
     }
 
     @Override
+    public void setAllNavagationItem(Realm realm, ArrayList<NavigationDrawerItem> navigationDrawerItems) {
+        homeInteractor.setAllNavigationItem(realm,navigationDrawerItems,this);
+    }
+
+    @Override
     public void onsetAllNote() {
         homeView.onFinishedSetAllNote();
     }
-/*
-    PasswordInteractor passwordInteractor;
-    PasswordView passwordView;
-    Context context;
-    Activity activity;
-    public HomePresenterImpli(Context context, Activity activity, PasswordView passwordView) {
-        this.passwordView=passwordView;
-        this.context=context;
-        this.activity=activity;
-        this.passwordInteractor = new PasswordInteractorImpil();
-
-    }
-    @Override
-    public void readBackup() {
-        passwordInteractor.setReadBackup(context,activity);
-    }
 
     @Override
-    public void writeBackup(String oldFilePath, String outFileName, Activity activity) {
-        passwordInteractor.setWriteBackup(oldFilePath,outFileName,activity,this);
+    public void onsetAllNavigationItems() {
+        homeView.onFinishedNavigationItems();
     }
 
-
-    @Override
-    public void onWriteBackupFinished() {
-        passwordView.onFinishWriteBackup();
-    }
-
-    @Override
-    public void onWriteBackupError(String error) {
-        passwordView.onErrorWriteBackup(error);
-    }*/
 }
