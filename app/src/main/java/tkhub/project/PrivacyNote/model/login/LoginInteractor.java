@@ -9,7 +9,7 @@ import io.realm.Realm;
  */
 
 public interface LoginInteractor {
-     void updateShowcastDatabase(Realm mRealm);
+     void updateShowcastDatabase();
 
 
 }

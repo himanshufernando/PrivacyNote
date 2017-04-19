@@ -46,10 +46,11 @@ import tkhub.project.PrivacyNote.ui.actitvity.LoginActivity;
 
 public class LoginInteractorImpil implements LoginInteractor {
     @Override
-    public void updateShowcastDatabase(Realm mRealm) {
-        final Long tableSize = mRealm.where(ShowcastDB.class).count();
+    public void updateShowcastDatabase() {
+        final Realm realm = Realm.getDefaultInstance();
+        final Long tableSize = realm.where(ShowcastDB.class).count();
         if(tableSize==0){
-            mRealm.executeTransaction(new Realm.Transaction() {
+            realm.executeTransaction(new Realm.Transaction() {
                 @Override
                 public void execute(Realm realm) {
                     ShowcastDB showcast = realm.createObject(ShowcastDB.class);

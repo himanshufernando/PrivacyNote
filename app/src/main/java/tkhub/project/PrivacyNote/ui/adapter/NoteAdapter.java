@@ -1,6 +1,7 @@
 package tkhub.project.PrivacyNote.ui.adapter;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,7 +12,6 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Random;
-
 
 
 import tkhub.project.PrivacyNote.R;
@@ -45,12 +45,34 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.MyViewHolder> 
     @Override
     public void onBindViewHolder(MyViewHolder holder, final int position) {
 
-        holder.eTitel.setText(item.get(position).title);
-        holder.username.setText(item.get(position).userName);
+        String titel = item.get(position).title;
+        String userName = item.get(position).userName;
+
+        if ((mContext.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_LARGE) {
+            if (titel.length()>30) {
+                holder.eTitel.setText(titel.substring(0,30));
+            } if(userName.length()>30){
+                holder.username.setText(userName.substring(0,30));
+            }else {
+                holder.eTitel.setText(titel);
+                holder.username.setText(userName);
+            }
+        } else if ((mContext.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_NORMAL) {
+            if (titel.length()>15) {
+                holder.eTitel.setText(titel.substring(0, 15));
+            }if(userName.length()>15){
+                holder.username.setText(userName.substring(0, 15));
+            }else {
+                holder.eTitel.setText(titel);
+                holder.username.setText(userName);
+            }
+
+        }
+
 
 
         holder.roundBack.setTextColor(setColor());
-        holder.roundBackgrounTitel.setText(item.get(position).title.toUpperCase().substring(0,1));
+        holder.roundBackgrounTitel.setText(item.get(position).title.toUpperCase().substring(0, 1));
 
         holder.main.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,7 +102,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.MyViewHolder> 
     class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
 
-        TextView eTitel, username,roundBackgrounTitel;
+        TextView eTitel, username, roundBackgrounTitel;
         RelativeLayout main, delete;
         TextViewFontAwesome roundBack;
 
@@ -115,12 +137,12 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.MyViewHolder> 
         g = rnd.nextInt(256);
         b = rnd.nextInt(256);
 
-        while ( (r == 255 && g == 256 && b == 256)){
+        while ((r == 255 && g == 256 && b == 256)) {
             r = rnd.nextInt(256);
             g = rnd.nextInt(256);
             b = rnd.nextInt(256);
         }
-        colorcode = Color.argb(255,r,g,b);
+        colorcode = Color.argb(255, r, g, b);
         return colorcode;
     }
 }

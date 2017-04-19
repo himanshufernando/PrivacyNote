@@ -4,8 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import io.realm.Realm;
+import io.realm.RealmAsyncTask;
 import tkhub.project.PrivacyNote.data.model.NavigationDrawerItem;
 import tkhub.project.PrivacyNote.data.model.NoteItem;
 import tkhub.project.PrivacyNote.model.home.HomeInteractor;
@@ -20,7 +22,7 @@ import tkhub.project.PrivacyNote.ui.view.PasswordView;
  * Created by Himanshu on 4/4/2017.
  */
 
-public class HomePresenterImpli implements HomePresenter,HomeInteractor.OnFinishedListener {
+public class HomePresenterImpli implements HomePresenter,HomeInteractor.OnFinishedListener{
 
 
     HomeView homeView;
@@ -31,14 +33,30 @@ public class HomePresenterImpli implements HomePresenter,HomeInteractor.OnFinish
     }
 
     @Override
-    public void setAllNote(Realm realm,ArrayList<NoteItem> noteItems,String keyword) {
-        homeInteractor.setAllNote(realm,noteItems,keyword,this);
+    public void setAllNote(ArrayList<NoteItem> noteItems,String keyword) {
+        homeInteractor.setAllNote(noteItems,keyword,this);
     }
 
     @Override
-    public void setAllNavagationItem(Realm realm, ArrayList<NavigationDrawerItem> navigationDrawerItems) {
-        homeInteractor.setAllNavigationItem(realm,navigationDrawerItems,this);
+    public void setAllNavagationItem(ArrayList<NavigationDrawerItem> navigationDrawerItems) {
+        homeInteractor.setAllNavigationItem(navigationDrawerItems,this);
     }
+
+    @Override
+    public void getFingerprintAutherAccess() {
+        homeInteractor.getFingerprintAutherAccess(this);
+    }
+
+    @Override
+    public void saveNote(String title, String userName, String password, String other) {
+        homeInteractor.saveNote(title,userName,password,other,this);
+    }
+
+    @Override
+    public void setSearchAutoComplteText(List<String> titleList) {
+        homeInteractor.setSearchAutoComplteText(titleList,this);
+    }
+
 
     @Override
     public void onsetAllNote() {
@@ -48,6 +66,31 @@ public class HomePresenterImpli implements HomePresenter,HomeInteractor.OnFinish
     @Override
     public void onsetAllNavigationItems() {
         homeView.onFinishedNavigationItems();
+    }
+
+    @Override
+    public void ongetFingerprintAutherAccess(boolean isAccess) {
+        homeView.onFinishedGetFingerprintAccess(isAccess);
+    }
+
+    @Override
+    public void onTitleEmpty() {
+        homeView.onNoteSaveTitleEmpty();
+    }
+
+    @Override
+    public void onSaveSuccess() {
+        homeView.onNoteSaveSuccess();
+    }
+
+    @Override
+    public void onSaveFail() {
+        homeView.onNoteSaveFail();
+    }
+
+    @Override
+    public void onSetSearchAutoComplteText() {
+        homeView.onFinisheSetSearchAutoComplteText();
     }
 
 }

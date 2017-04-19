@@ -268,7 +268,7 @@ public class LoginActivity extends Activity {
 
 
     public void updateshowcastDb(){
-        loginPresenter.OnShowcastDatabaseUpdate(mRealm);
+        loginPresenter.OnShowcastDatabaseUpdate();
     }
 
 

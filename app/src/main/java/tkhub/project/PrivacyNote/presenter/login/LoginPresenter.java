@@ -9,6 +9,6 @@ import io.realm.Realm;
  */
 
 public interface LoginPresenter {
-    void OnShowcastDatabaseUpdate(Realm mRealm);
+    void OnShowcastDatabaseUpdate();
 
 }

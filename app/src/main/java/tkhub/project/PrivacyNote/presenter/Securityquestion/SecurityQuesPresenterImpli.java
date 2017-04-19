@@ -38,13 +38,13 @@ public class SecurityQuesPresenterImpli implements SecurityQuesPresenter, Securi
     }
 
     @Override
-    public void setSecurityQues(String color, String game, String year, String city, Realm realm, int type) {
-        securityQuesInteractor.securityQuesAdd(color, game, year, city, realm, type, this);
+    public void setSecurityQues(String color, String game, String year, String city, int type) {
+        securityQuesInteractor.securityQuesAdd(color, game, year, city,type, this);
     }
 
     @Override
-    public void deleteAllUsers(Realm realm) {
-        securityQuesInteractor.deleteAllUsers(realm);
+    public void deleteAllUsers() {
+        securityQuesInteractor.deleteAllUsers();
     }
 
     @Override

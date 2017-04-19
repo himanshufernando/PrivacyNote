@@ -41,7 +41,7 @@ public interface SecurityQuesInteractor {
         void onResetSuccess();
     }
 
-    void securityQuesAdd(String color, String game, String year, String city, Realm realm, int type, OnSecurityQuesAddFinishedListener onSecurityQuesAddFinishedListener);
+    void securityQuesAdd(String color, String game, String year, String city,int type, OnSecurityQuesAddFinishedListener onSecurityQuesAddFinishedListener);
 
-    void deleteAllUsers(Realm realm);
+    void deleteAllUsers();
 }

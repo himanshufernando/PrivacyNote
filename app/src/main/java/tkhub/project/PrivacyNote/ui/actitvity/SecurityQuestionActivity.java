@@ -50,7 +50,6 @@ public class SecurityQuestionActivity extends Activity implements SecurityQuesVi
     String color = "", sport = "", year = "", city = "";
 
 
-    private Realm mRealm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +58,7 @@ public class SecurityQuestionActivity extends Activity implements SecurityQuesVi
         ButterKnife.bind(this);
 
         Realm.init(this);
-        mRealm = Realm.getDefaultInstance();
+
 
         setAddButtonLayout();
 
@@ -83,7 +82,7 @@ public class SecurityQuestionActivity extends Activity implements SecurityQuesVi
             alertDialog.setIcon(R.drawable.fingerprint);
             alertDialog.setPositiveButton("YES", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
-                    securityQuesPresenter.deleteAllUsers(mRealm);
+                    securityQuesPresenter.deleteAllUsers();
                     finish();
                     System.exit(0);
                 }
@@ -127,7 +126,7 @@ public class SecurityQuestionActivity extends Activity implements SecurityQuesVi
     @OnClick(R.id.btn_done)
     public void onClick(View view) {
         securityQuesPresenter.setSecurityQues(spinnerColor.getText().toString(),
-                spinnerSport.getText().toString(),spinnerYear.getText().toString(),edittextCity.getText().toString(),mRealm,getLayoutStatus());
+                spinnerSport.getText().toString(),spinnerYear.getText().toString(),edittextCity.getText().toString(),getLayoutStatus());
     }
 
     @Override

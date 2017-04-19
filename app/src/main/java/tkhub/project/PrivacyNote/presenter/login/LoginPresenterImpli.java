@@ -22,8 +22,8 @@ public class LoginPresenterImpli implements LoginPresenter {
     }
 
     @Override
-    public void OnShowcastDatabaseUpdate(Realm mRealm) {
-        loginInteractor.updateShowcastDatabase(mRealm);
+    public void OnShowcastDatabaseUpdate() {
+        loginInteractor.updateShowcastDatabase();
     }
 
 

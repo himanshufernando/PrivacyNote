@@ -34,8 +34,8 @@
             android:layout_alignParentTop="true"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="10dp"
-            android:layout_toEndOf="@+id/relativeLayout"
             android:layout_toRightOf="@+id/relativeLayout"
+            android:layout_toLeftOf="@+id/relativeLayoutdelete"
             android:text="TextView"
             android:textAppearance="@android:style/TextAppearance.Large" />
 

@@ -73,8 +73,11 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
+import butterknife.OnItemClick;
 import butterknife.OnTextChanged;
 import io.realm.Realm;
+import io.realm.RealmAsyncTask;
 import tkhub.project.PrivacyNote.ui.adapter.NavigationDrawer;
 import tkhub.project.PrivacyNote.data.model.NavigationDrawerItem;
 import tkhub.project.PrivacyNote.presenter.home.HomePresenter;
@@ -110,19 +113,36 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
 
     @BindView(R.id.relativeLayoutnoteadd)
     RelativeLayout layoutAdd;
+
     @BindView(R.id.relativeLayoutlistnote)
     RelativeLayout layoutView;
+
     @BindView(R.id.relativeLayoutserachbutton)
     RelativeLayout searchBtn;
+
     @BindView(R.id.relativeLayoutSearch)
     RelativeLayout layoutSearch;
+
     @BindView(R.id.relativeLayout16)
     RelativeLayout serachClose;
+
     @BindView(R.id.relativeLayout3)
     RelativeLayout layoutAbout;
 
     @BindView(R.id.autoCompleteTextView)
     AutoCompleteTextView autoText;
+
+    @BindView(R.id.editText_other)
+    EditText other;
+
+    @BindView(R.id.editText_title)
+    EditText title;
+
+    @BindView(R.id.editText_user)
+    EditText username;
+
+    @BindView(R.id.editText_pass2)
+    EditText password;
 
 
     HomePresenter homePresenter;
@@ -137,8 +157,6 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
     RelativeLayout layoutEdit;
 
 
-    EditText other, title, username, password;
-
     TextViewFontAwesome t1, t2, t3, t4;
     TextView message;
 
@@ -149,8 +167,7 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
     public String noteUserName;
     public String notePassword;
     public String noteOther;
-    SearchView searchView;
-    String finalPass;
+
     String pass;
 
     int confrimStatues = 0;
@@ -171,6 +188,7 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
     @Inject
     Cipher mCipher;
     @Inject
+
     List<String> titleList;
 
     Typeface tf;
@@ -185,9 +203,6 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
     private File EXPORT_REALM_PATH;
     private String EXPORT_REALM_FILE_NAME = "privacynotebackup.realm";
     private String IMPORT_REALM_FILE_NAME = "default.realm";
-
-    private ArrayList<String> docPaths = new ArrayList<>();
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -220,156 +235,70 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
         onActivityLoard();
 
 
-        titleList = new ArrayList<String>();
-
-        navigationList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (position == 0) {
-                    dLayout.closeDrawer(Gravity.LEFT);
-                }
-                if (position == 1) {
-                    if (!checkPermission()) {
-                        requestPermission();
-                    } else {
-                        writeBackup();
-
-                    }
-
-                }
-                if (position == 2) {
-
-                    if (isFingerprintEnable()) {
-                        Intent i = new Intent(HomeActivity.this, AboutActivity.class);
-                        Bundle bndlanimation = ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.animation, R.anim.animation2).toBundle();
-                        finish();
-                        startActivity(i, bndlanimation);
-                    } else {
-                        Intent intent = new Intent(HomeActivity.this, SecurityQuestionActivity.class);
-                        intent.putExtra("PerantLayout", 2);
-                        Bundle bndlanimation = ActivityOptions.makeCustomAnimation(HomeActivity.this, R.anim.animation, R.anim.animation2).toBundle();
-                        finish();
-                        startActivity(intent, bndlanimation);
-                    }
-
-
-                }
-                if (position == 3) {
-                    Intent i = new Intent(HomeActivity.this, AboutActivity.class);
-                    Bundle bndlanimation = ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.animation, R.anim.animation2).toBundle();
-                    finish();
-                    startActivity(i, bndlanimation);
-                }
-
-
-            }
-        });
-
-
-        layoutAbout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dLayout.openDrawer(Gravity.LEFT);
-            }
-        });
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                layoutAdd.setVisibility(View.VISIBLE);
-                layoutView.setVisibility(View.INVISIBLE);
-                backStatus = true;
-            }
-        });
-
-        serachClose.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                layoutSearch.setVisibility(View.INVISIBLE);
-                searchBtn.setVisibility(View.VISIBLE);
-                homePresenter.setAllNote(mRealm, noteItems, "");
-            }
-        });
-
-
-        searchBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                layoutSearch.setVisibility(View.VISIBLE);
-                searchBtn.setVisibility(View.INVISIBLE);
-            }
-        });
-
-
-        FloatingActionButton save = (FloatingActionButton) findViewById(R.id.fab2);
-        save.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                title = (EditText) findViewById(R.id.editText_title);
-                username = (EditText) findViewById(R.id.editText_user);
-                password = (EditText) findViewById(R.id.editText_pass2);
-                other = (EditText) findViewById(R.id.editText_other);
-
-                if (title.getText().toString().equals("")) {
-                    Toast.makeText(HomeActivity.this, "Title is empty", Toast.LENGTH_LONG).show();
-                } else {
-                    final Long tableSize = mRealm.where(NoteDB.class).count();
-                    mRealm.executeTransaction(new Realm.Transaction() {
-                        @Override
-                        public void execute(Realm realm) {
-
-                            Object primaryKeyValue = tableSize + 1;
-                            NoteDB note = realm.createObject(NoteDB.class, primaryKeyValue);
-                            note.setTitle(title.getText().toString());
-                            note.setUserName(username.getText().toString());
-                            note.setPassword(password.getText().toString());
-                            note.setOther(other.getText().toString());
-                            note.setAllowe(0);
-
-                            Toast.makeText(HomeActivity.this, "Title added successfully", Toast.LENGTH_LONG).show();
-
-                            title.setText("");
-                            username.setText("");
-                            password.setText("");
-                            other.setText("");
-
-                            layoutView.setVisibility(View.VISIBLE);
-                            layoutAdd.setVisibility(View.INVISIBLE);
-                            backStatus = false;
 
 
 
-                            homePresenter.setAllNote(mRealm, noteItems, "");
+    }
 
-                            titleList.clear();
-                            for (NoteDB no : mRealm.where(NoteDB.class).findAll()) {
-                                titleList.add(no.getTitle());
 
-                            }
-                            setAutotext(titleList);
+    @OnClick(R.id.fab2)
+    public void onSaveClick(View view) {
+        homePresenter.saveNote(title.getText().toString(), username.getText().toString(), password.getText().toString(), other.getText().toString());
+    }
 
-                        }
-                    });
+    @OnClick(R.id.relativeLayoutserachbutton)
+    public void onSerachClick(View view) {
+        layoutSearch.setVisibility(View.VISIBLE);
+        searchBtn.setVisibility(View.INVISIBLE);
+    }
 
-                }
+    @OnClick(R.id.relativeLayout16)
+    public void onSerachCloseClick(View view) {
+        layoutSearch.setVisibility(View.INVISIBLE);
+        searchBtn.setVisibility(View.VISIBLE);
+        homePresenter.setAllNote(noteItems, "");
+    }
+
+    @OnClick(R.id.fab)
+    public void onAddFloatingActionButtonClick(View view) {
+        layoutAdd.setVisibility(View.VISIBLE);
+        layoutView.setVisibility(View.INVISIBLE);
+        backStatus = true;
+    }
+
+
+    @OnClick(R.id.relativeLayout3)
+    public void onClick(View view) {
+        dLayout.openDrawer(Gravity.LEFT);
+    }
+
+    @OnItemClick(R.id.listView_navigation)
+    public void onItemClick(int position) {
+        if (position == 0) {
+            dLayout.closeDrawer(Gravity.LEFT);
+        } else if (position == 1) {
+            if (!checkPermission()) {
+                requestPermission();
+            } else {
+                writeBackup();
 
             }
-        });
-
-
+        } else if (position == 2) {
+            homePresenter.getFingerprintAutherAccess();
+        } else if (position == 3) {
+            Intent i = new Intent(HomeActivity.this, AboutActivity.class);
+            Bundle bndlanimation = ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.animation, R.anim.animation2).toBundle();
+            finish();
+            startActivity(i, bndlanimation);
+        }
     }
 
     @OnTextChanged(value = R.id.autoCompleteTextView, callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
     void afterEmailInput(Editable editable) {
-        homePresenter.setAllNote(mRealm, noteItems, editable.toString());
+        homePresenter.setAllNote(noteItems, editable.toString());
     }
 
-    public void setAutotext(List<String> tiList) {
-        ArrayAdapter<String> titleAdapterList = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, tiList);
-        autoText.setAdapter(titleAdapterList);
-    }
+
 
 
     public void showNoteDialog(Context con) {
@@ -612,12 +541,7 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
 
                 edit.setAllowe(12);
                 mRealm.commitTransaction();
-                noteItems.clear();
-               /* for (NoteDB no : mRealm.where(NoteDB.class).equalTo("allowe", 0).findAll()) {
-                    noteItems.add(new NoteItem(no.getId(), no.getTitle(), no.getUserName(),
-                            no.getPassword(), no.getOther()));
-                }*/
-                eventList.setAdapter(notAdapter);
+                homePresenter.setAllNote(noteItems, "");
             }
         });
         alertDialog.setNegativeButton("NO", new DialogInterface.OnClickListener() {
@@ -652,22 +576,8 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
             layoutView.setVisibility(View.VISIBLE);
             layoutAdd.setVisibility(View.INVISIBLE);
             backStatus = false;
-            noteItems.clear();
-            /*for (NoteDB no : mRealm.where(NoteDB.class).equalTo("allowe", 0).findAll()) {
-                noteItems.add(new NoteItem(no.getId(), no.getTitle(), no.getUserName(),
-                        no.getPassword(), no.getOther()));
-
-            }
-*/
-            eventList.setAdapter(notAdapter);
-            titleList.clear();
-            for (NoteDB no : mRealm.where(NoteDB.class).findAll()) {
-                titleList.add(no.getTitle());
-
-            }
-
-            ArrayAdapter<String> titleAdapterList = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, titleList);
-            autoText.setAdapter(titleAdapterList);
+            homePresenter.setAllNote(noteItems, "");
+            homePresenter.setSearchAutoComplteText(titleList);
         } else {
             AlertDialog.Builder alertDialog = new AlertDialog.Builder(HomeActivity.this);
             alertDialog.setTitle("Exit");
@@ -1218,46 +1128,16 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
                 .start();
     }
 
-    public boolean isFingerprintEnable() {
-
-        boolean result = false;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            try {
-                keyguardManager = (KeyguardManager) getSystemService(KEYGUARD_SERVICE);
-                fingerprintManager = (FingerprintManager) getSystemService(FINGERPRINT_SERVICE);
-                if (!fingerprintManager.isHardwareDetected()) {
-                    result = false;
-                } else if (!keyguardManager.isKeyguardSecure()) {
-                    result = false;
-                } else if (ActivityCompat.checkSelfPermission(this, Manifest.permission.USE_FINGERPRINT) != PackageManager.PERMISSION_GRANTED) {
-                    result = false;
-                } else if (!fingerprintManager.hasEnrolledFingerprints()) {
-                    result = false;
-                } else {
-                    result = true;
-                }
-
-
-            } catch (NoClassDefFoundError noclass) {
-                result = false;
-            }
-        } else {
-            result = false;
-        }
-        return result;
-    }
-
 
     private void onActivityLoard() {
+        titleList = new ArrayList<String>();
         notAdapter = new NoteAdapter(this, noteItems);
         navigationDrawerAdapter = new NavigationDrawer(this, navigationDrawerItems);
 
-
         homePresenter = new HomePresenterImpli(this);
 
-
-        homePresenter.setAllNote(mRealm, noteItems, "");
-        homePresenter.setAllNavagationItem(mRealm,navigationDrawerItems);
+        homePresenter.setAllNote(noteItems, "");
+        homePresenter.setAllNavagationItem(navigationDrawerItems);
     }
 
     @Override
@@ -1268,5 +1148,54 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
     @Override
     public void onFinishedNavigationItems() {
         navigationList.setAdapter(navigationDrawerAdapter);
+    }
+
+    @Override
+    public void onFinishedGetFingerprintAccess(boolean isAccess) {
+        if (isAccess) {
+            Intent i = new Intent(HomeActivity.this, AboutActivity.class);
+            Bundle bndlanimation = ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.animation, R.anim.animation2).toBundle();
+            finish();
+            startActivity(i, bndlanimation);
+        } else {
+            Intent intent = new Intent(HomeActivity.this, SecurityQuestionActivity.class);
+            intent.putExtra("PerantLayout", 2);
+            Bundle bndlanimation = ActivityOptions.makeCustomAnimation(HomeActivity.this, R.anim.animation, R.anim.animation2).toBundle();
+            finish();
+            startActivity(intent, bndlanimation);
+        }
+    }
+
+    @Override
+    public void onNoteSaveTitleEmpty() {
+        Toast.makeText(HomeActivity.this, "Title is empty", Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onNoteSaveSuccess() {
+        Toast.makeText(HomeActivity.this, "Title added successfully", Toast.LENGTH_LONG).show();
+        title.setText("");
+        username.setText("");
+        password.setText("");
+        other.setText("");
+
+        layoutView.setVisibility(View.VISIBLE);
+        layoutAdd.setVisibility(View.INVISIBLE);
+        backStatus = false;
+
+        homePresenter.setAllNote(noteItems, "");
+        homePresenter.setSearchAutoComplteText(titleList);
+
+    }
+
+    @Override
+    public void onNoteSaveFail() {
+        showMessageOKCancel("Saving Fail,try agin", null);
+    }
+
+    @Override
+    public void onFinisheSetSearchAutoComplteText() {
+        ArrayAdapter<String> titleAdapterList = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, titleList);
+        autoText.setAdapter(titleAdapterList);
     }
 }

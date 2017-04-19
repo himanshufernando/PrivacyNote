@@ -10,6 +10,6 @@ public interface SecurityQuesPresenter {
     void setColors();
     void setGames();
     void setYears();
-    void setSecurityQues(String color, String game, String year, String city, Realm realm,int type);
-    void deleteAllUsers(Realm realm);
+    void setSecurityQues(String color, String game, String year, String city,int type);
+    void deleteAllUsers();
 }

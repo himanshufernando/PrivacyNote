@@ -48,7 +48,8 @@ public class SecurityQuesInteractorImpil implements SecurityQuesInteractor {
     }
 
     @Override
-    public void securityQuesAdd(final String color, final String game, final String year, final String city, final Realm mRealm, final int type, final OnSecurityQuesAddFinishedListener onSecurityQuesAddFinishedListener) {
+    public void securityQuesAdd(final String color, final String game, final String year, final String city, final int type, final OnSecurityQuesAddFinishedListener onSecurityQuesAddFinishedListener) {
+        final Realm realm = Realm.getDefaultInstance();
         if (color.equals("Select Your Color")) {
             onSecurityQuesAddFinishedListener.onColorEmptyError();
         } else if (game.equals("Select Your Sport")) {
@@ -58,10 +59,9 @@ public class SecurityQuesInteractorImpil implements SecurityQuesInteractor {
         } else if (city.equals("") || city.isEmpty()) {
             onSecurityQuesAddFinishedListener.onCityEmptyError();
         } else {
-
             if(type==1){
-                final Long tableSize = mRealm.where(SecurityDB.class).count();
-                mRealm.executeTransactionAsync(new Realm.Transaction() {
+                final Long tableSize = realm.where(SecurityDB.class).count();
+                realm.executeTransactionAsync(new Realm.Transaction() {
                     @Override
                     public void execute(Realm bgRealm) {
                         Object primaryKeyValue = tableSize + 1;
@@ -85,21 +85,21 @@ public class SecurityQuesInteractorImpil implements SecurityQuesInteractor {
                 });
 
             }else {
-                Long checkAllData = mRealm.where(SecurityDB.class).equalTo("color", color).equalTo("sport", game).equalTo("year", year).equalTo("city", city).count();
+                Long checkAllData = realm.where(SecurityDB.class).equalTo("color", color).equalTo("sport", game).equalTo("year", year).equalTo("city", city).count();
                 if(checkAllData==0){
-                    Long colorCount = mRealm.where(SecurityDB.class).equalTo("color", color).count();
+                    Long colorCount = realm.where(SecurityDB.class).equalTo("color", color).count();
                     if (colorCount == 0) {
                         onSecurityQuesAddFinishedListener.onColorError();
                     } else {
-                        Long sportCount = mRealm.where(SecurityDB.class).equalTo("sport", game).count();
+                        Long sportCount = realm.where(SecurityDB.class).equalTo("sport", game).count();
                         if (sportCount == 0) {
                             onSecurityQuesAddFinishedListener.onGamesError();
                         } else {
-                            Long yearCount = mRealm.where(SecurityDB.class).equalTo("year", year).count();
+                            Long yearCount = realm.where(SecurityDB.class).equalTo("year", year).count();
                             if (yearCount == 0) {
                                 onSecurityQuesAddFinishedListener.onYearError();
                             } else {
-                                Long cityCount = mRealm.where(SecurityDB.class).equalTo("city", city).count();
+                                Long cityCount = realm.where(SecurityDB.class).equalTo("city", city).count();
                                 if (cityCount == 0) {
                                     onSecurityQuesAddFinishedListener.onCityError();
                                 }
@@ -107,7 +107,7 @@ public class SecurityQuesInteractorImpil implements SecurityQuesInteractor {
                         }
                     }
                 }else {
-                    deleteAllUsers(mRealm);
+                    deleteAllUsers();
                     onSecurityQuesAddFinishedListener.onResetSuccess();
                 }
             }
@@ -116,7 +116,8 @@ public class SecurityQuesInteractorImpil implements SecurityQuesInteractor {
     }
 
     @Override
-    public void deleteAllUsers(Realm realm) {
+    public void deleteAllUsers() {
+        final Realm realm = Realm.getDefaultInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {

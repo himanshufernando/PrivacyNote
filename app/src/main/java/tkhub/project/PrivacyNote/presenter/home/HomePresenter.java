@@ -3,8 +3,10 @@ package tkhub.project.PrivacyNote.presenter.home;
 import android.app.Activity;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import io.realm.Realm;
+import io.realm.RealmAsyncTask;
 import tkhub.project.PrivacyNote.data.model.NavigationDrawerItem;
 import tkhub.project.PrivacyNote.data.model.NoteItem;
 
@@ -13,6 +15,9 @@ import tkhub.project.PrivacyNote.data.model.NoteItem;
  */
 
 public interface HomePresenter {
-    void setAllNote(Realm realm,ArrayList<NoteItem> noteItems,String keyword);
-    void setAllNavagationItem(Realm realm, ArrayList<NavigationDrawerItem> navigationDrawerItems);
+    void setAllNote(ArrayList<NoteItem> noteItems,String keyword);
+    void setAllNavagationItem(ArrayList<NavigationDrawerItem> navigationDrawerItems);
+    void getFingerprintAutherAccess();
+    void saveNote(String title, String userName, String password, String other);
+    void setSearchAutoComplteText(List<String> titleList);
 }
