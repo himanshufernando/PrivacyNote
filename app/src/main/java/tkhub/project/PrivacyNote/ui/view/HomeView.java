@@ -19,4 +19,7 @@ public interface HomeView {
 
     void onFinisheSetSearchAutoComplteText();
 
+    void onNoteDeleteSuccess();
+    void onNoteDeleteFail();
+
 }

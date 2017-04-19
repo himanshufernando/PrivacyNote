@@ -20,4 +20,5 @@ public interface HomePresenter {
     void getFingerprintAutherAccess();
     void saveNote(String title, String userName, String password, String other);
     void setSearchAutoComplteText(List<String> titleList);
+    void deleteNote(int id);
 }

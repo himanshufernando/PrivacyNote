@@ -8,6 +8,7 @@ import java.util.List;
 import io.realm.Case;
 import io.realm.Realm;
 import io.realm.RealmAsyncTask;
+import io.realm.RealmResults;
 import tkhub.project.PrivacyNote.R;
 import tkhub.project.PrivacyNote.data.database.SecurityDB;
 import tkhub.project.PrivacyNote.data.model.NavigationDrawerItem;
@@ -19,6 +20,8 @@ import tkhub.project.PrivacyNote.data.model.NoteItem;
  */
 
 public class HomeInteractorImpil implements HomeInteractor {
+
+    static final int MY_PERMISSIONS_REQUEST_EXTERNAL_STORAGE_READ = 124;
 
     @Override
     public void setAllNote(ArrayList<NoteItem> noteItems, String keyword, OnFinishedListener onFinishedListener) {
@@ -70,9 +73,9 @@ public class HomeInteractorImpil implements HomeInteractor {
         if (title.equals("")) {
             onFinishedListener.onTitleEmpty();
         } else {
-            final Realm realmtest = Realm.getDefaultInstance();
-            final Long tableSize = realmtest.where(NoteDB.class).count();
-            realmtest.executeTransactionAsync(new Realm.Transaction() {
+            final Realm realm = Realm.getDefaultInstance();
+            final Long tableSize = realm.where(NoteDB.class).count();
+            realm.executeTransactionAsync(new Realm.Transaction() {
                 @Override
                 public void execute(Realm bgRealm) {
                     Object primaryKeyValue = tableSize + 1;
@@ -106,5 +109,28 @@ public class HomeInteractorImpil implements HomeInteractor {
             titleList.add(no.getTitle());
         }
         onFinishedListener.onSetSearchAutoComplteText();
+    }
+
+    @Override
+    public void deleteNote(final int id, final OnFinishedListener onFinishedListener) {
+        final Realm realm = Realm.getDefaultInstance();
+
+        realm.executeTransactionAsync(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                final RealmResults<NoteDB> results = realm.where(NoteDB.class).equalTo("id", id).findAll();
+                results.deleteAllFromRealm();
+            }
+        }, new Realm.Transaction.OnSuccess() {
+            @Override
+            public void onSuccess() {
+                onFinishedListener.onNoteDeleteSuccess();
+            }
+        }, new Realm.Transaction.OnError() {
+            @Override
+            public void onError(Throwable error) {
+                onFinishedListener.onNoteDeleteFail();
+            }
+        });
     }
 }

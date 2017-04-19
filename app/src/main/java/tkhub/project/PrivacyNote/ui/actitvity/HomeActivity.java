@@ -536,12 +536,7 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
         alertDialog.setIcon(R.drawable.fingerprint);
         alertDialog.setPositiveButton("YES", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                mRealm.beginTransaction();
-                NoteDB edit = mRealm.where(NoteDB.class).equalTo("id", deleteID).findFirst();
-
-                edit.setAllowe(12);
-                mRealm.commitTransaction();
-                homePresenter.setAllNote(noteItems, "");
+                homePresenter.deleteNote(deleteID);
             }
         });
         alertDialog.setNegativeButton("NO", new DialogInterface.OnClickListener() {
@@ -1190,12 +1185,22 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
 
     @Override
     public void onNoteSaveFail() {
-        showMessageOKCancel("Saving Fail,try agin", null);
+        showMessageOKCancel("Saving Fail,Try agin", null);
     }
 
     @Override
     public void onFinisheSetSearchAutoComplteText() {
         ArrayAdapter<String> titleAdapterList = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, titleList);
         autoText.setAdapter(titleAdapterList);
+    }
+
+    @Override
+    public void onNoteDeleteSuccess() {
+        homePresenter.setAllNote(noteItems, "");
+    }
+
+    @Override
+    public void onNoteDeleteFail() {
+        showMessageOKCancel("Note Delete Fail,Try agin", null);
     }
 }

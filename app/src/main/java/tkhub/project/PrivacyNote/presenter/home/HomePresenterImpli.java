@@ -57,6 +57,11 @@ public class HomePresenterImpli implements HomePresenter,HomeInteractor.OnFinish
         homeInteractor.setSearchAutoComplteText(titleList,this);
     }
 
+    @Override
+    public void deleteNote(int id) {
+        homeInteractor.deleteNote(id,this);
+    }
+
 
     @Override
     public void onsetAllNote() {
@@ -91,6 +96,16 @@ public class HomePresenterImpli implements HomePresenter,HomeInteractor.OnFinish
     @Override
     public void onSetSearchAutoComplteText() {
         homeView.onFinisheSetSearchAutoComplteText();
+    }
+
+    @Override
+    public void onNoteDeleteSuccess() {
+        homeView.onNoteDeleteSuccess();
+    }
+
+    @Override
+    public void onNoteDeleteFail() {
+        homeView.onNoteDeleteFail();
     }
 
 }

@@ -19,6 +19,7 @@ public interface HomeInteractor {
     void getFingerprintAutherAccess(OnFinishedListener onFinishedListener);
     void saveNote(String title,String userName, String password, String other, OnFinishedListener onFinishedListener);
     void setSearchAutoComplteText(List<String> titleList,OnFinishedListener onFinishedListener);
+    void deleteNote(int id,OnFinishedListener onFinishedListener);
 
     interface OnFinishedListener {
         void onsetAllNote();
@@ -30,6 +31,9 @@ public interface HomeInteractor {
         void onSaveFail();
 
         void onSetSearchAutoComplteText();
+
+        void onNoteDeleteSuccess();
+        void onNoteDeleteFail();
     }
 
 
