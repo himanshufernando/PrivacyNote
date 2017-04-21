@@ -112,16 +112,7 @@ public class LoginActivity extends Activity {
                     final Long tableSize = mRealm.where(ShowcastDB.class).count();
 
                     if (tableSize == 0) {
-                        new android.support.v7.app.AlertDialog.Builder(LoginActivity.this)
-                                .setMessage("Please use your Fingerprint to login")
-                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        return;
-                                    }
-                                })
-                                .create()
-                                .show();
+
                     } else {
                         System.out.println("sdssdsd");
                     }

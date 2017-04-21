@@ -1,5 +1,7 @@
 package tkhub.project.PrivacyNote.data.database;
 
+import java.util.Date;
+
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
@@ -9,20 +11,21 @@ import io.realm.annotations.PrimaryKey;
 public class NoteDB extends RealmObject {
 
     @PrimaryKey
-    private int id;
+    private long id;
     private String title;
     private String userName;
     private String password;
     private String other;
+    private Date adDate;
     private int allowe;
 
 
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -64,5 +67,13 @@ public class NoteDB extends RealmObject {
 
     public void setAllowe(int allowe) {
         this.allowe = allowe;
+    }
+
+    public Date getAdDate() {
+        return adDate;
+    }
+
+    public void setAdDate(Date adDate) {
+        this.adDate = adDate;
     }
 }

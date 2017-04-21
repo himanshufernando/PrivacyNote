@@ -23,21 +23,19 @@ import android.os.Process;
 import android.os.Vibrator;
 import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyProperties;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
+
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
+
 import android.text.Editable;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.view.animation.Animation;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -47,12 +45,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.nbsp.materialfilepicker.MaterialFilePicker;
 import com.nbsp.materialfilepicker.ui.FilePickerActivity;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -63,7 +59,10 @@ import java.security.NoSuchProviderException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
@@ -77,7 +76,6 @@ import butterknife.OnClick;
 import butterknife.OnItemClick;
 import butterknife.OnTextChanged;
 import io.realm.Realm;
-import io.realm.RealmAsyncTask;
 import tkhub.project.PrivacyNote.ui.adapter.NavigationDrawer;
 import tkhub.project.PrivacyNote.data.model.NavigationDrawerItem;
 import tkhub.project.PrivacyNote.presenter.home.HomePresenter;
@@ -162,7 +160,7 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
 
     String passwordToBeconfirmd = "";
 
-    public int noteId;
+    public long noteId;
     public String noteTitle;
     public String noteUserName;
     public String notePassword;
@@ -196,13 +194,14 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
 
     KeyguardManager keyguardManager;
     FingerprintManager fingerprintManager;
-    int deleteID;
+    long deleteID;
 
     private FingerprintManager.CryptoObject mCryptoObject;
 
     private File EXPORT_REALM_PATH;
     private String EXPORT_REALM_FILE_NAME = "privacynotebackup.realm";
     private String IMPORT_REALM_FILE_NAME = "default.realm";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -236,10 +235,18 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
 
 
 
-
-
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if(dialogBox.isShowing()){
+            dialogBox.dismiss();
+        }else {
+
+        }
+
+    }
 
     @OnClick(R.id.fab2)
     public void onSaveClick(View view) {
@@ -277,12 +284,7 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
         if (position == 0) {
             dLayout.closeDrawer(Gravity.LEFT);
         } else if (position == 1) {
-            if (!checkPermission()) {
-                requestPermission();
-            } else {
-                writeBackup();
-
-            }
+            homePresenter.writeBackup(this,HomeActivity.this,EXPORT_REALM_PATH,EXPORT_REALM_FILE_NAME);
         } else if (position == 2) {
             homePresenter.getFingerprintAutherAccess();
         } else if (position == 3) {
@@ -297,8 +299,6 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
     void afterEmailInput(Editable editable) {
         homePresenter.setAllNote(noteItems, editable.toString());
     }
-
-
 
 
     public void showNoteDialog(Context con) {
@@ -402,12 +402,8 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
 
                                 dialogBoxedit.dismiss();
 
-                                noteItems.clear();
-                              /*  for (NoteDB no : mRealm.where(NoteDB.class).equalTo("allowe", 0).findAll()) {
-                                    noteItems.add(new NoteItem(no.getId(), no.getTitle(), no.getUserName(),
-                                            no.getPassword(), no.getOther()));
-                                }*/
-                                eventList.setAdapter(notAdapter);
+                                homePresenter.setAllNote(noteItems,"");
+
 
                             }
                         });
@@ -421,7 +417,7 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
 
     }
 
-    public void lodeNote(int id, String title, String userName, String password, String other) {
+    public void lodeNote(Long id, String title, String userName, String password, String other) {
         noteId = id;
         noteTitle = title;
         noteUserName = userName;
@@ -479,7 +475,7 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
     }
 
     @TargetApi(Build.VERSION_CODES.M)
-    public void accesPermitonforDelete(final int id) {
+    public void accesPermitonforDelete(final long id) {
 
         Toast.makeText(this, "Fingerprint Access Needed", Toast.LENGTH_LONG).show();
 
@@ -901,7 +897,7 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
                                 AppuserDB toEdit = mRealm.where(AppuserDB.class).equalTo("id", 1).findFirst();
                                 toEdit.setPassword(pass);
 
-                                Toast.makeText(HomeActivity.this, "PasswordActivity reset successfully", Toast.LENGTH_LONG).show();
+                                Toast.makeText(HomeActivity.this, "Password reset successfully", Toast.LENGTH_LONG).show();
                                 pass = "";
                                 confrimStatues = 1;
                                 passwordToBeconfirmd = "";
@@ -957,46 +953,7 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
         }
     }
 
-    private String copyBundledRealmFile(String oldFilePath, String outFileName) {
-        try {
-            File file = new File(HomeActivity.this.getFilesDir(), outFileName);
 
-            FileOutputStream outputStream = new FileOutputStream(file);
-
-            FileInputStream inputStream = new FileInputStream(new File(oldFilePath));
-
-            byte[] buf = new byte[1024];
-            int bytesRead;
-
-
-            while ((bytesRead = inputStream.read(buf)) > 0) {
-                outputStream.write(buf, 0, bytesRead);
-            }
-            outputStream.close();
-            return file.getAbsolutePath();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    private boolean checkPermission() {
-        int result = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        return result == PackageManager.PERMISSION_GRANTED;
-    }
-
-    private boolean checkPermissionRead() {
-        int result = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE);
-        return result == PackageManager.PERMISSION_GRANTED;
-    }
-
-    private void requestPermission() {
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_EXTERNAL_STORAGE_WRITE);
-    }
-
-    private void requestPermissionRead() {
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_EXTERNAL_STORAGE_READ);
-    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
@@ -1005,25 +962,9 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
                 if (grantResults.length > 0) {
                     boolean locationAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
                     if (locationAccepted) {
-                        writeBackup();
+                        homePresenter.writeBackup(this,HomeActivity.this,EXPORT_REALM_PATH,EXPORT_REALM_FILE_NAME);
                     } else {
                         Toast.makeText(this, "Permission Denied", Toast.LENGTH_LONG).show();
-
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            if (shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                                showMessageOKCancel("You need to allow access to both the permissions",
-                                        new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                                    requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_EXTERNAL_STORAGE_WRITE);
-                                                }
-                                            }
-                                        });
-                                return;
-                            }
-                        }
-
                     }
                 }
                 break;
@@ -1031,25 +972,9 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
                 if (grantResults.length > 0) {
                     boolean locationAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
                     if (locationAccepted) {
-                        readeBackup();
+                        homePresenter.readBackup(this,HomeActivity.this);
                     } else {
                         Toast.makeText(this, "Permission Denied", Toast.LENGTH_LONG).show();
-
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            if (shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                                showMessageOKCancel("You need to allow access to both the permissions",
-                                        new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                                    requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_EXTERNAL_STORAGE_READ);
-                                                }
-                                            }
-                                        });
-                                return;
-                            }
-                        }
-
                     }
                 }
         }
@@ -1058,78 +983,20 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-
         if (requestCode == 1 && resultCode == RESULT_OK) {
             String filePath = data.getStringExtra(FilePickerActivity.RESULT_FILE_PATH);
-            copyBundledRealmFile(filePath, IMPORT_REALM_FILE_NAME);
-
-            new AlertDialog.Builder(HomeActivity.this)
-                    .setTitle("Restore Successfully")
-                    .setMessage("Database restore successfully,please restart the app and reset your password")
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            Process.killProcess(Process.myPid());
-                        }
-                    })
-                    .create()
-                    .show();
+            homePresenter.resetBackup(filePath,IMPORT_REALM_FILE_NAME,HomeActivity.this);
         } else {
             dLayout.closeDrawer(Gravity.LEFT);
         }
-
-
     }
-
-    private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
-        new AlertDialog.Builder(HomeActivity.this)
-                .setMessage(message)
-                .setPositiveButton("OK", okListener)
-                .setNegativeButton("Cancel", null)
-                .create()
-                .show();
-    }
-
-    public void writeBackup() {
-        File exportRealmFile;
-        EXPORT_REALM_PATH.mkdirs();
-        exportRealmFile = new File(EXPORT_REALM_PATH, EXPORT_REALM_FILE_NAME);
-        exportRealmFile.delete();
-        mRealm.writeCopyTo(exportRealmFile);
-
-        String msg = "File exported to Path: " + EXPORT_REALM_PATH + "/" + EXPORT_REALM_FILE_NAME;
-
-        new AlertDialog.Builder(HomeActivity.this)
-                .setTitle("Backup Successful")
-                .setMessage(msg)
-                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dLayout.closeDrawer(Gravity.LEFT);
-                    }
-                })
-                .create()
-                .show();
-
-        mRealm.close();
-    }
-
-    public void readeBackup() {
-        new MaterialFilePicker()
-                .withActivity(HomeActivity.this)
-                .withRequestCode(1)
-                .withFilterDirectories(true) // Set directories filterable (false by default)
-                .withHiddenFiles(true) // Show hidden files and folders
-                .start();
-    }
-
 
     private void onActivityLoard() {
         titleList = new ArrayList<String>();
         notAdapter = new NoteAdapter(this, noteItems);
         navigationDrawerAdapter = new NavigationDrawer(this, navigationDrawerItems);
 
-        homePresenter = new HomePresenterImpli(this);
+        homePresenter = new HomePresenterImpli(this, HomeActivity.this, this);
 
         homePresenter.setAllNote(noteItems, "");
         homePresenter.setAllNavagationItem(navigationDrawerItems);
@@ -1148,10 +1015,7 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
     @Override
     public void onFinishedGetFingerprintAccess(boolean isAccess) {
         if (isAccess) {
-            Intent i = new Intent(HomeActivity.this, AboutActivity.class);
-            Bundle bndlanimation = ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.animation, R.anim.animation2).toBundle();
-            finish();
-            startActivity(i, bndlanimation);
+            homePresenter.readBackup(this,HomeActivity.this);
         } else {
             Intent intent = new Intent(HomeActivity.this, SecurityQuestionActivity.class);
             intent.putExtra("PerantLayout", 2);
@@ -1185,7 +1049,12 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
 
     @Override
     public void onNoteSaveFail() {
-        showMessageOKCancel("Saving Fail,Try agin", null);
+        new AlertDialog.Builder(HomeActivity.this)
+                .setMessage("Saving Fail,Try agin")
+                .setPositiveButton("OK", null)
+                .setNegativeButton("Cancel", null)
+                .create()
+                .show();
     }
 
     @Override
@@ -1201,6 +1070,57 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
 
     @Override
     public void onNoteDeleteFail() {
-        showMessageOKCancel("Note Delete Fail,Try agin", null);
+        new AlertDialog.Builder(HomeActivity.this)
+                .setMessage("Note Delete Fail,Try agin")
+                .setPositiveButton("OK", null)
+                .setNegativeButton("Cancel", null)
+                .create()
+                .show();
     }
+
+    @Override
+    public void onFinishWriteBackup(String savefilename) {
+        new AlertDialog.Builder(HomeActivity.this)
+                .setTitle("Backup Successful")
+                .setMessage(savefilename)
+                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dLayout.closeDrawer(Gravity.LEFT);
+                    }
+                })
+                .create()
+                .show();
+    }
+
+    @Override
+    public void onFinishResetBackup() {
+        new AlertDialog.Builder(HomeActivity.this)
+                .setTitle("Restore Successfully")
+                .setMessage("Database restore successfully,please restart the app and reset your password")
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Process.killProcess(Process.myPid());
+                    }
+                })
+                .create()
+                .show();
+    }
+
+    @Override
+    public void onErrorResetBackup(String error) {
+        new AlertDialog.Builder(HomeActivity.this)
+                .setTitle("Restore Fail")
+                .setMessage(error+ ",Please try again")
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Process.killProcess(Process.myPid());
+                    }
+                })
+                .create()
+                .show();
+    }
+
+
 }

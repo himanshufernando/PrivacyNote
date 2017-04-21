@@ -5,14 +5,14 @@ package tkhub.project.PrivacyNote.data.model;
  */
 public class NoteItem {
 
-    public int id;
+    public Long id;
     public String title;
     public String userName;
     public String password;
     public String other;
     public int allowe;
 
-    public NoteItem(int id, String title, String userName, String password, String other) {
+    public NoteItem(Long id, String title, String userName, String password, String other) {
         this.id = id;
         this.title = title;
         this.userName = userName;
@@ -23,11 +23,11 @@ public class NoteItem {
 
 
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

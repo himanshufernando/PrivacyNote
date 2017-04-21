@@ -22,4 +22,11 @@ public interface HomeView {
     void onNoteDeleteSuccess();
     void onNoteDeleteFail();
 
+    void onFinishWriteBackup(String savefilename);
+
+    void onFinishResetBackup();
+     void onErrorResetBackup(String error);
+
+
+
 }

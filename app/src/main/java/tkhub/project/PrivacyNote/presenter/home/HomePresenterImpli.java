@@ -3,6 +3,7 @@ package tkhub.project.PrivacyNote.presenter.home;
 import android.app.Activity;
 import android.content.Context;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,8 +28,13 @@ public class HomePresenterImpli implements HomePresenter,HomeInteractor.OnFinish
 
     HomeView homeView;
     HomeInteractor homeInteractor;
-    public HomePresenterImpli(HomeView homeView) {
+
+    Context context;
+    Activity activity;
+    public HomePresenterImpli(Context context, Activity activity,HomeView homeView) {
         this.homeView=homeView;
+        this.context=context;
+        this.activity=activity;
         homeInteractor = new HomeInteractorImpil();
     }
 
@@ -58,8 +64,23 @@ public class HomePresenterImpli implements HomePresenter,HomeInteractor.OnFinish
     }
 
     @Override
-    public void deleteNote(int id) {
+    public void deleteNote(long id) {
         homeInteractor.deleteNote(id,this);
+    }
+
+    @Override
+    public void writeBackup(Context context, Activity activity, File backupfile, String filename) {
+        homeInteractor.setWriteBackup(context,activity,backupfile,filename,this);
+    }
+
+    @Override
+    public void readBackup(Context context, Activity activity) {
+        homeInteractor.ReadBackup(context,activity);
+    }
+
+    @Override
+    public void resetBackup(String oldFilePath, String outFileName, Activity activity) {
+        homeInteractor.setResetBackup(oldFilePath,outFileName,activity,this);
     }
 
 
@@ -107,5 +128,21 @@ public class HomePresenterImpli implements HomePresenter,HomeInteractor.OnFinish
     public void onNoteDeleteFail() {
         homeView.onNoteDeleteFail();
     }
+
+    @Override
+    public void onWriteBackupFinished(String saveFileName) {
+        homeView.onFinishWriteBackup(saveFileName);
+    }
+
+    @Override
+    public void onResetBackupFinished() {
+        homeView.onFinishResetBackup();
+    }
+
+    @Override
+    public void onResetBackupError(String error) {
+        homeView.onErrorResetBackup(error);
+    }
+
 
 }

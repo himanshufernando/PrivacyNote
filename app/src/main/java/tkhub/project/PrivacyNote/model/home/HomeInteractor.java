@@ -1,5 +1,9 @@
 package tkhub.project.PrivacyNote.model.home;
 
+import android.app.Activity;
+import android.content.Context;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +23,12 @@ public interface HomeInteractor {
     void getFingerprintAutherAccess(OnFinishedListener onFinishedListener);
     void saveNote(String title,String userName, String password, String other, OnFinishedListener onFinishedListener);
     void setSearchAutoComplteText(List<String> titleList,OnFinishedListener onFinishedListener);
-    void deleteNote(int id,OnFinishedListener onFinishedListener);
+    void deleteNote(long id,OnFinishedListener onFinishedListener);
+
+    void setWriteBackup(Context context,Activity activity,File file,String filename,OnFinishedListener onFinishedListener);
+    void ReadBackup(Context context, Activity activity);
+    void setResetBackup(String oldFilePath, String outFileName,Activity activity,OnFinishedListener onFinishedListener);
+
 
     interface OnFinishedListener {
         void onsetAllNote();
@@ -34,6 +43,13 @@ public interface HomeInteractor {
 
         void onNoteDeleteSuccess();
         void onNoteDeleteFail();
+
+        void onWriteBackupFinished(String saveFileName);
+
+        void onResetBackupFinished();
+        void onResetBackupError(String error);
+
+
     }
 
 

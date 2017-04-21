@@ -68,5 +68,4 @@ public class PasswordInteractorImpil implements PasswordInteractor {
         ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},  MY_PERMISSIONS_REQUEST_EXTERNAL_STORAGE_READ);
     }
 
-
 }
