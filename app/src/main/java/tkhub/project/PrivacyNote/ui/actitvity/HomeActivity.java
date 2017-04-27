@@ -39,6 +39,8 @@ import android.view.animation.Animation;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -234,17 +236,20 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
         onActivityLoard();
 
 
-
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        if(dialogBox.isShowing()){
-            dialogBox.dismiss();
-        }else {
+        if (dialogBox != null) {
+            if (dialogBox.isShowing()) {
+                dialogBox.dismiss();
+            } else {
+            }
+        } else {
 
         }
+
 
     }
 
@@ -284,7 +289,7 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
         if (position == 0) {
             dLayout.closeDrawer(Gravity.LEFT);
         } else if (position == 1) {
-            homePresenter.writeBackup(this,HomeActivity.this,EXPORT_REALM_PATH,EXPORT_REALM_FILE_NAME);
+            homePresenter.writeBackup(this, HomeActivity.this, EXPORT_REALM_PATH, EXPORT_REALM_FILE_NAME);
         } else if (position == 2) {
             homePresenter.getFingerprintAutherAccess();
         } else if (position == 3) {
@@ -402,7 +407,7 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
 
                                 dialogBoxedit.dismiss();
 
-                                homePresenter.setAllNote(noteItems,"");
+                                homePresenter.setAllNote(noteItems, "");
 
 
                             }
@@ -423,6 +428,8 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
         noteUserName = userName;
         notePassword = password;
         noteOther = other;
+
+        setLoginOption();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             try {
@@ -954,7 +961,6 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
     }
 
 
-
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
@@ -962,7 +968,7 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
                 if (grantResults.length > 0) {
                     boolean locationAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
                     if (locationAccepted) {
-                        homePresenter.writeBackup(this,HomeActivity.this,EXPORT_REALM_PATH,EXPORT_REALM_FILE_NAME);
+                        homePresenter.writeBackup(this, HomeActivity.this, EXPORT_REALM_PATH, EXPORT_REALM_FILE_NAME);
                     } else {
                         Toast.makeText(this, "Permission Denied", Toast.LENGTH_LONG).show();
                     }
@@ -972,7 +978,7 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
                 if (grantResults.length > 0) {
                     boolean locationAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
                     if (locationAccepted) {
-                        homePresenter.readBackup(this,HomeActivity.this);
+                        homePresenter.readBackup(this, HomeActivity.this);
                     } else {
                         Toast.makeText(this, "Permission Denied", Toast.LENGTH_LONG).show();
                     }
@@ -985,7 +991,7 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1 && resultCode == RESULT_OK) {
             String filePath = data.getStringExtra(FilePickerActivity.RESULT_FILE_PATH);
-            homePresenter.resetBackup(filePath,IMPORT_REALM_FILE_NAME,HomeActivity.this);
+            homePresenter.resetBackup(filePath, IMPORT_REALM_FILE_NAME, HomeActivity.this);
         } else {
             dLayout.closeDrawer(Gravity.LEFT);
         }
@@ -1015,7 +1021,7 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
     @Override
     public void onFinishedGetFingerprintAccess(boolean isAccess) {
         if (isAccess) {
-            homePresenter.readBackup(this,HomeActivity.this);
+            homePresenter.readBackup(this, HomeActivity.this);
         } else {
             Intent intent = new Intent(HomeActivity.this, SecurityQuestionActivity.class);
             intent.putExtra("PerantLayout", 2);
@@ -1111,7 +1117,7 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
     public void onErrorResetBackup(String error) {
         new AlertDialog.Builder(HomeActivity.this)
                 .setTitle("Restore Fail")
-                .setMessage(error+ ",Please try again")
+                .setMessage(error + ",Please try again")
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -1122,5 +1128,33 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
                 .show();
     }
 
+    public void setLoginOption() {
+        View checkBoxView = View.inflate(this, R.layout.checkbox, null);
+        CheckBox checkBox = (CheckBox) checkBoxView.findViewById(R.id.checkbox);
+        checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                // Save to shared preferences
+            }
+        });
+        checkBox.setText("Text to the right of the check box.");
+
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(" MY_TEXT");
+        builder.setMessage(" MY_TEXT ")
+                .setView(checkBoxView)
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                                                }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+
+                    }
+                }).show();
+    }
 }
