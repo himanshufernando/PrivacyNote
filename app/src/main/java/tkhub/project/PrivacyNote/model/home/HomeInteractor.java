@@ -29,6 +29,10 @@ public interface HomeInteractor {
     void ReadBackup(Context context, Activity activity);
     void setResetBackup(String oldFilePath, String outFileName,Activity activity,OnFinishedListener onFinishedListener);
 
+    void setUserChoices(int choice);
+
+    void getUserChoices(OnFinishedListener onFinishedListener);
+
 
     interface OnFinishedListener {
         void onsetAllNote();
@@ -48,6 +52,8 @@ public interface HomeInteractor {
 
         void onResetBackupFinished();
         void onResetBackupError(String error);
+
+        void ongetUserChoices(int result);
 
 
     }

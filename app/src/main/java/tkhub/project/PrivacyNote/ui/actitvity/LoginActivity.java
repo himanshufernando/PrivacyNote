@@ -252,7 +252,7 @@ public class LoginActivity extends Activity {
                 finish();
                 startActivity(intent, bndlanimation);
             }
-        }, 3000);
+        }, 1000);
 
 
     }

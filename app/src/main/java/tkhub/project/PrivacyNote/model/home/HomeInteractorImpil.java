@@ -24,6 +24,8 @@ import io.realm.Realm;
 import io.realm.RealmAsyncTask;
 import io.realm.RealmResults;
 import tkhub.project.PrivacyNote.R;
+import tkhub.project.PrivacyNote.data.database.AppuserDB;
+import tkhub.project.PrivacyNote.data.database.ChoiceDB;
 import tkhub.project.PrivacyNote.data.database.SecurityDB;
 import tkhub.project.PrivacyNote.data.model.NavigationDrawerItem;
 import tkhub.project.PrivacyNote.data.database.NoteDB;
@@ -97,7 +99,6 @@ public class HomeInteractorImpil implements HomeInteractor {
                 public void execute(Realm bgRealm) {
                     Object primaryKeyValue = System.currentTimeMillis();
                     NoteDB note = bgRealm.createObject(NoteDB.class, primaryKeyValue);
-                    System.out.println("delete id :"+primaryKeyValue);
                     note.setTitle(title);
                     note.setUserName(userName);
                     note.setPassword(password);
@@ -209,6 +210,50 @@ public class HomeInteractorImpil implements HomeInteractor {
             e.printStackTrace();
         }catch (Exception ex){
             onFinishedListener.onResetBackupError(ex.toString());
+        }
+    }
+
+    @Override
+    public void setUserChoices(final int userChoice) {
+        final Realm realm = Realm.getDefaultInstance();
+        final Long tableSize = realm.where(ChoiceDB.class).count();
+        realm.executeTransactionAsync(new Realm.Transaction() {
+            @Override
+            public void execute(Realm bgRealm) {
+                if(tableSize==0){
+                    ChoiceDB choice = bgRealm.createObject(ChoiceDB.class);
+                    choice.setId(userChoice);
+
+                }else {
+                    ChoiceDB choice = bgRealm.where(ChoiceDB.class).findFirst();
+                    choice.setId(userChoice);
+                }
+            }
+        }, new Realm.Transaction.OnSuccess() {
+            @Override
+            public void onSuccess() {
+
+            }
+        }, new Realm.Transaction.OnError() {
+            @Override
+            public void onError(Throwable error) {
+
+            }
+        });
+    }
+
+    @Override
+    public void getUserChoices(OnFinishedListener onFinishedListener) {
+        final Realm realm = Realm.getDefaultInstance();
+        int result;
+        ChoiceDB choiceDB = realm.where(ChoiceDB.class).findFirst();
+        if (realm.where(SecurityDB.class).count() == 0){
+            onFinishedListener.ongetUserChoices(-1);
+        }else if (choiceDB == null) {
+            onFinishedListener.ongetUserChoices(0);
+        }else {
+            result=choiceDB.getId();
+            onFinishedListener.ongetUserChoices(result);
         }
     }
 

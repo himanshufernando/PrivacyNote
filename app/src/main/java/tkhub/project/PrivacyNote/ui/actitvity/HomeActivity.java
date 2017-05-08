@@ -205,6 +205,9 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
     private String IMPORT_REALM_FILE_NAME = "default.realm";
 
 
+    boolean userChoice = false;
+    AlertDialog dlg;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -328,7 +331,7 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
 
         titel.setText(noteTitle);
         user.setText("User Name : " + noteUserName);
-        pass.setText("PasswordActivity : " + notePassword);
+        pass.setText("Password : " + notePassword);
         other.setText("Other : " + noteOther);
 
         layoutuser.setOnClickListener(new View.OnClickListener() {
@@ -429,13 +432,14 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
         notePassword = password;
         noteOther = other;
 
-        setLoginOption();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             try {
                 Toast.makeText(this, "Fingerprint Access Needed", Toast.LENGTH_LONG).show();
                 keyguardManager = (KeyguardManager) getSystemService(KEYGUARD_SERVICE);
                 fingerprintManager = (FingerprintManager) getSystemService(FINGERPRINT_SERVICE);
+                status = 1;
+                homePresenter.getChoice();
 
                 if (!keyguardManager.isKeyguardSecure()) {
                     Toast.makeText(this, "Lock screen security not enabled in Settings", Toast.LENGTH_LONG).show();
@@ -477,6 +481,12 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
     }
 
     public void accesPermiton() {
+
+        if(dlg == null){
+        }else {
+            dlg.dismiss();
+        }
+
         showNoteDialog(HomeActivity.this);
 
     }
@@ -484,12 +494,12 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
     @TargetApi(Build.VERSION_CODES.M)
     public void accesPermitonforDelete(final long id) {
 
-        Toast.makeText(this, "Fingerprint Access Needed", Toast.LENGTH_LONG).show();
 
         try {
             keyguardManager = (KeyguardManager) getSystemService(KEYGUARD_SERVICE);
             fingerprintManager = (FingerprintManager) getSystemService(FINGERPRINT_SERVICE);
-
+            status = 2;
+            homePresenter.getChoice();
             if (!keyguardManager.isKeyguardSecure()) {
                 Toast.makeText(this, "Lock screen security not enabled in Settings", Toast.LENGTH_LONG).show();
                 return;
@@ -945,7 +955,7 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
                         deleteNote();
                     }
                 } else {
-                    message.setText("PasswordActivity wrong");
+                    message.setText("Password wrong");
                     message.setTextColor(getResources().getColor(R.color.iconRed));
                     t1.setText(R.string.icon_circle);
                     t2.setText(R.string.icon_circle);
@@ -1128,32 +1138,56 @@ public class HomeActivity extends Activity implements Animation.AnimationListene
                 .show();
     }
 
+    @Override
+    public void onGetUserChoies(int result) {
+
+
+        if(result == -1){
+            Toast.makeText(this, "Fingerprint Access Needed", Toast.LENGTH_LONG).show();
+        }else if (result == 0) {
+            setLoginOption();
+        } else if (result == 2) {
+            passwordDialog(this);
+        } else if (result == 3) {
+            Toast.makeText(this, "Fingerprint Access Needed", Toast.LENGTH_LONG).show();
+        }
+    }
+
     public void setLoginOption() {
+
         View checkBoxView = View.inflate(this, R.layout.checkbox, null);
         CheckBox checkBox = (CheckBox) checkBoxView.findViewById(R.id.checkbox);
         checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
-                // Save to shared preferences
+                userChoice = isChecked;
             }
         });
-        checkBox.setText("Text to the right of the check box.");
+        checkBox.setText("Remember my choice");
 
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(" MY_TEXT");
-        builder.setMessage(" MY_TEXT ")
+        AlertDialog.Builder userChoicesBuilder = new AlertDialog.Builder(this);
+        dlg = userChoicesBuilder.create();
+        userChoicesBuilder.setMessage("Do you want to use password logging instead of fingerprint ?")
                 .setView(checkBoxView)
-                .setCancelable(false)
+                .setCancelable(true)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                                                }
+                        if (userChoice) {
+                            homePresenter.setChoice(2);
+                        } else {
+                        }
+                        passwordDialog(HomeActivity.this);
+                    }
                 })
                 .setNegativeButton("No", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-
+                        if (userChoice) {
+                            homePresenter.setChoice(3);
+                        } else {
+                        }
+                        Toast.makeText(HomeActivity.this, "Fingerprint Access Needed", Toast.LENGTH_LONG).show();
+                        return;
                     }
                 }).show();
     }

@@ -83,6 +83,16 @@ public class HomePresenterImpli implements HomePresenter,HomeInteractor.OnFinish
         homeInteractor.setResetBackup(oldFilePath,outFileName,activity,this);
     }
 
+    @Override
+    public void setChoice(int userChoice) {
+        homeInteractor.setUserChoices(userChoice);
+    }
+
+    @Override
+    public void getChoice() {
+        homeInteractor.getUserChoices(this);
+    }
+
 
     @Override
     public void onsetAllNote() {
@@ -142,6 +152,11 @@ public class HomePresenterImpli implements HomePresenter,HomeInteractor.OnFinish
     @Override
     public void onResetBackupError(String error) {
         homeView.onErrorResetBackup(error);
+    }
+
+    @Override
+    public void ongetUserChoices(int result) {
+        homeView.onGetUserChoies(result);
     }
 
 

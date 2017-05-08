@@ -28,6 +28,9 @@ public interface HomePresenter {
     void readBackup(Context context,Activity activity);
 
     void resetBackup(String oldFilePath, String outFileName,Activity activity);
+    void setChoice(int userChoice);
+    void getChoice();
+
    /* void readBackup();
     void writeBackup(String oldFilePath, String outFileName,Activity activity);
     void resetBackup(File backupfile,String filename);*/

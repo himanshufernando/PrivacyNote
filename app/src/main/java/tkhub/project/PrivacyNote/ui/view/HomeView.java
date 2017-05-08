@@ -10,23 +10,29 @@ import tkhub.project.PrivacyNote.data.model.NoteItem;
 
 public interface HomeView {
     void onFinishedSetAllNote();
+
     void onFinishedNavigationItems();
+
     void onFinishedGetFingerprintAccess(boolean isAccess);
 
     void onNoteSaveTitleEmpty();
+
     void onNoteSaveSuccess();
+
     void onNoteSaveFail();
 
     void onFinisheSetSearchAutoComplteText();
 
     void onNoteDeleteSuccess();
+
     void onNoteDeleteFail();
 
     void onFinishWriteBackup(String savefilename);
 
     void onFinishResetBackup();
-     void onErrorResetBackup(String error);
 
+    void onErrorResetBackup(String error);
 
+    void onGetUserChoies(int result);
 
 }

@@ -24,7 +24,7 @@ public class PrivacyNoteApp extends Application {
         Realm.init(this);
         RealmConfiguration config0 = new RealmConfiguration.Builder()
                 .name("default0.realm")
-                .schemaVersion(0)
+                .schemaVersion(2)
                 .build();
         try {
             Realm.migrateRealm(config0, new Migration());
